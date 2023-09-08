@@ -12,12 +12,7 @@ const splTransfer = async (props: InferenceFnProps): Promise<Partial<ReadablePar
         const transfer = transferInstruction[0].data as Transfer
 
         const tokenObject = await (async () => {
-            console.log('transfer.tokenMint', transfer.tokenMint, tokens.length)
             if (transfer.tokenMint) {
-                console.log('tokens.find(t => t.address == transfer.tokenMint)', tokens.find(t => {
-                    console.log(t.address, transfer.tokenMint)
-                    return t.address == transfer.tokenMint
-                }))
                 const tokenFound = tokens.find(t => t.address == transfer.tokenMint)
                 if (tokenFound) return tokenFound
                 else {
@@ -27,12 +22,10 @@ const splTransfer = async (props: InferenceFnProps): Promise<Partial<ReadablePar
                 if (walletAddress) {
                     //To speed up search next time
                     const tokenFromTo = Cache.ref().get(transfer.to)
-                    console.log('tokenFromTo', tokenFromTo)
                     if (tokenFromTo) {
                         return JSON.parse(tokenFromTo as string)
                     }
                     const tokenFromFrom = Cache.ref().get(transfer.from)
-                    console.log('tokenFromFrom', tokenFromFrom)
                     if (tokenFromFrom) {
                         return JSON.parse(tokenFromFrom as string)
                     }
@@ -67,7 +60,7 @@ const splTransfer = async (props: InferenceFnProps): Promise<Partial<ReadablePar
         // If this doesn't hace mint is not the transfer tx we expect
         if (tokenObject) {
             const amount = tokenObject ? transfer.amount / Math.pow(10, tokenObject.decimals) : transfer.amount
-            const getDirection = () => {
+            const getAction = () => {
                 if (walletAddress) {
                     const ata = getAssociatedTokenAddressSync(new PublicKey(tokenObject.address), new PublicKey(walletAddress))
                     if (ata.toBase58() == transfer.from) return 'WALLET_SEND'
@@ -84,7 +77,7 @@ const splTransfer = async (props: InferenceFnProps): Promise<Partial<ReadablePar
                     ...transfer,
                     ...tokenObject,
                     amount,
-                    direction: getDirection()
+                    action: getAction()
                 }
             }
         } else {

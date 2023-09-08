@@ -96,7 +96,7 @@ export type SplTransferTransaction = {
     symbol: string,
     logoURI: string,
     amount: number,
-    action: 'USER_SEND' | 'USER_RECEIVE' | 'UNKNOWN'
+    action: 'WALLET_SEND' | 'WALLET_RECEIVE' | 'UNKNOWN'
 }
 
 export type UnknownTransaction = {
