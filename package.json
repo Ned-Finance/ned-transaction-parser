@@ -1,0 +1,67 @@
+{
+    "name": "ned-transactions-parser",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {},
+    "dependencies": {
+        "@coral-xyz/anchor": "^0.26.0",
+        "@debridge-finance/solana-transaction-parser": "^2.0.0",
+        "@metaplex-foundation/js": "^0.19.4",
+        "@metaplex-foundation/mpl-token-metadata": "^2.13.0",
+        "winston": "^3.10.0",
+        "ts-pattern": "^5.0.1",
+        "cross-fetch": "^3.1.5",
+        "@tradle/react-native-http": "^2.0.0",
+        "react-native-crypto": "^2.1.0",
+        "https-browserify": "~0.0.0",
+        "path-browserify": "^0.0.0",
+        "browserify-zlib": "^0.2.0",
+        "react-native-level-fs": "^3.0.0",
+        "readable-stream": "^1.0.33",
+        "stream-browserify": "^3.0.0",
+        "react-native-os": "^1.2.6"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.20.0",
+        "@types/bn.js": "^5.1.1",
+        "@types/lodash": "^4.14.192",
+        "@types/react": "~18.0.27",
+        "babel-plugin-rewrite-require": "^1.14.5",
+        "babel-plugin-transform-remove-console": "^6.9.4",
+        "typescript": "^4.9.4"
+    },
+    "private": true,
+    "react-native": {
+        "crypto": "react-native-crypto",
+        "http": "@tradle/react-native-http",
+        "https": "https-browserify",
+        "path": "path-browserify",
+        "zlib": "browserify-zlib",
+        "fs": "react-native-level-fs",
+        "_stream_transform": "readable-stream/transform",
+        "_stream_readable": "readable-stream/readable",
+        "_stream_writable": "readable-stream/writable",
+        "_stream_duplex": "readable-stream/duplex",
+        "_stream_passthrough": "readable-stream/passthrough",
+        "stream": "stream-browserify",
+        "os": "react-native-os"
+    },
+    "browser": {
+        "crypto": "react-native-crypto",
+        "http": "@tradle/react-native-http",
+        "https": "https-browserify",
+        "path": "path-browserify",
+        "zlib": "browserify-zlib",
+        "fs": "react-native-level-fs",
+        "_stream_transform": "readable-stream/transform",
+        "_stream_readable": "readable-stream/readable",
+        "_stream_writable": "readable-stream/writable",
+        "_stream_duplex": "readable-stream/duplex",
+        "_stream_passthrough": "readable-stream/passthrough",
+        "stream": "stream-browserify",
+        "os": "react-native-os"
+    },
+    "resolutions": {
+        "react-devtools-core": "4.26.1"
+    }
+}
