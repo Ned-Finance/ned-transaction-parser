@@ -1,7 +1,7 @@
 {
     "name": "ned-transactions-parser",
     "version": "1.0.0",
-    "main": "index.js",
+    "main": "index.ts",
     "scripts": {},
     "dependencies": {
         "@coral-xyz/anchor": "^0.26.0",
