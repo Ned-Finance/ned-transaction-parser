@@ -1,7 +1,7 @@
 import _ from "lodash";
-import { InferenceFnProps, ReadableParsedTransaction, Transfer } from "../humanize/types";
+import { InferenceFnProps, InferenceResult, Transfer } from "../humanize/types";
 
-const jupiterTransaction = async (props: InferenceFnProps): Promise<Partial<ReadableParsedTransaction> | null> => {
+const jupiterTransaction = async (props: InferenceFnProps): Promise<InferenceResult> => {
     const { instructions, tokens, walletAddress, connection } = props
     const swap = instructions.filter(i => i.type == 'JUPITER_SWAP')
     if (swap.length) {
@@ -25,7 +25,8 @@ const jupiterTransaction = async (props: InferenceFnProps): Promise<Partial<Read
                     ...tokenToObject,
                     amount: toAmount,
                 }
-            }
+            },
+            instructions
         }
     } else return null
 

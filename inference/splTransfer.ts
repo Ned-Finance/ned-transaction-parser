@@ -2,10 +2,10 @@ import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 import { PublicKey } from "@solana/web3.js";
 import _ from "lodash";
 import { Cache } from "../cache";
-import { InferenceFnProps, ReadableParsedTransaction, Transfer } from "../humanize/types";
+import { InferenceFnProps, InferenceResult, Transfer } from "../humanize/types";
 import { imageFromMetaplex } from "../utils/token";
 
-const splTransfer = async (props: InferenceFnProps): Promise<Partial<ReadableParsedTransaction> | null> => {
+const splTransfer = async (props: InferenceFnProps): Promise<InferenceResult> => {
     const { instructions, tokens, walletAddress, connection } = props
     const transferInstruction = instructions.filter(i => i.type == 'SPL_TRANSFER')
     if (transferInstruction.length == 1) {
@@ -78,7 +78,8 @@ const splTransfer = async (props: InferenceFnProps): Promise<Partial<ReadablePar
                     ...tokenObject,
                     amount,
                     action: getAction()
-                }
+                },
+                instructions
             }
         } else {
             return null

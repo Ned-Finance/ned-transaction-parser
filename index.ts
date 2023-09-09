@@ -6,6 +6,7 @@ import _ from "lodash";
 import { humanizeUnknown } from "./humanize/fn/unknown";
 import { ReadableParsedInstruction, ReadableParsedTransaction } from "./humanize/types";
 import jupiterTransaction from "./inference/jupiterTransaction";
+import solTransfer from "./inference/solTransfer";
 import splTransfer from "./inference/splTransfer";
 import unknown from "./inference/unknown";
 import protocolsPrograms from './protocols/programs';
@@ -85,6 +86,7 @@ export default class SolanaParser {
         const fns = [
             jupiterTransaction,
             splTransfer,
+            solTransfer,
             unknown
         ]
 
@@ -100,12 +102,8 @@ export default class SolanaParser {
 
         prettyLog.info('Inference ended...')
         console.log('transactionsParsed', transactionsParsed)
-        const partialTx = _.first(transactionsParsed.filter(t => !_.isNull(t))) as Partial<ReadableParsedTransaction>
-        return {
-            type: partialTx.type!,
-            data: partialTx.data!,
-            instructions
-        }
+        const parsed = _.first(transactionsParsed.filter(t => !_.isNull(t))) as ReadableParsedTransaction
+        return parsed
 
     }
 

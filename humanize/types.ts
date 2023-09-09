@@ -88,7 +88,19 @@ export type SwapTransaction = {
     tokenFrom: SwapTokenInfo,
     tokenTo: SwapTokenInfo
 }
+
 export type SplTransferTransaction = {
+    from: string,
+    to: string,
+    name: string,
+    address: string,
+    symbol: string,
+    logoURI: string,
+    amount: number,
+    action: 'WALLET_SEND' | 'WALLET_RECEIVE' | 'UNKNOWN'
+}
+
+export type SolTransferTransaction = {
     from: string,
     to: string,
     name: string,
@@ -104,7 +116,11 @@ export type UnknownTransaction = {
 }
 
 
-type DataTransaction = SwapTransaction | SplTransferTransaction | UnknownTransaction
+type DataTransaction =
+    SwapTransaction
+    | SplTransferTransaction
+    | SolTransferTransaction
+    | UnknownTransaction
 
 
 export type ReadableParsedTransaction = {
@@ -120,3 +136,5 @@ export type InferenceFnProps = {
     walletAddress?: string,
     connection: Connection
 }
+
+export type InferenceResult = ReadableParsedTransaction | null
