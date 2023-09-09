@@ -1,11 +1,12 @@
 import { prettyLog } from "@app/utils/common/logging";
 import { Idl } from "@coral-xyz/anchor";
-import { ParsedInstruction, SolanaParser as SolanaParserCore, parseLogs as parseLogsParser } from "@debridge-finance/solana-transaction-parser";
+import { ParsedInstruction, SolanaParser as SolanaParserCore, flattenTransactionResponse, parseLogs as parseLogsParser } from "@debridge-finance/solana-transaction-parser";
 import { Connection, Finality, Message, VersionedMessage } from "@solana/web3.js";
 import _ from "lodash";
 import { humanizeUnknown } from "./humanize/fn/unknown";
 import { ReadableParsedInstruction, ReadableParsedTransaction } from "./humanize/types";
 import jupiterTransaction from "./inference/jupiterTransaction";
+import jupiterTransactionV4 from "./inference/jupiterTransactionV4";
 import solTransfer from "./inference/solTransfer";
 import splTransfer from "./inference/splTransfer";
 import unknown from "./inference/unknown";
@@ -85,6 +86,7 @@ export default class SolanaParser {
         prettyLog.debug(instructions)
         const fns = [
             jupiterTransaction,
+            jupiterTransactionV4,
             splTransfer,
             solTransfer,
             unknown
@@ -101,8 +103,8 @@ export default class SolanaParser {
         )
 
         prettyLog.info('Inference ended...')
-        console.log('transactionsParsed', transactionsParsed)
-        const parsed = _.first(transactionsParsed.filter(t => !_.isNull(t))) as ReadableParsedTransaction
+        console.log('transactionsParsed', JSON.stringify(transactionsParsed, undefined, 2))
+        const parsed = _.first(transactionsParsed.filter(t => !_.isNull(t))) as Omit<ReadableParsedTransaction, "date">
         return parsed
 
     }
@@ -116,10 +118,17 @@ export default class SolanaParser {
 
     async parseTransaction(txId: string, commitment?: Finality): Promise<ReadableParsedTransaction | null> {
         prettyLog.info('Start parsing transaction %s', txId)
-        const parsedInstructions = await this._txParser.parseTransaction(this._connection, txId, true, commitment)
+
+        const transaction = await this._connection.getTransaction(txId, { commitment: commitment, maxSupportedTransactionVersion: 0 });
+        if (!transaction) return null;
+        const parsedInstructions = flattenTransactionResponse(transaction).map((ix) => this._txParser.parseInstruction(ix));
+        // const parsedInstructions = await this._txParser.parseTransaction(this._connection, txId, true, commitment)
         // console.log('parsedInstructions ===>', JSON.stringify(parsedInstructions, undefined, 2))
         if (parsedInstructions)
-            return await this.nedParser(parsedInstructions)
+            return {
+                ...(await this.nedParser(parsedInstructions)),
+                date: transaction.blockTime
+            }
         else return null
     }
 

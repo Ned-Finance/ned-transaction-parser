@@ -1,6 +1,8 @@
 import { Metaplex, PublicKey } from "@metaplex-foundation/js"
 import { Connection } from "@solana/web3.js"
-import { SolanaParserToken } from "../parser"
+import { SolanaParserToken } from ".."
+
+export const WSOL_ADDRESS = 'So11111111111111111111111111111111111111112'
 
 export const imageFromMetaplex = async (tokenMint: string, connection: Connection): Promise<(SolanaParserToken | null)> => {
 

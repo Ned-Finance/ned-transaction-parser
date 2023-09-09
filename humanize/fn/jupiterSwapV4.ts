@@ -11,14 +11,16 @@ const parseSwapRaydium = async (parsed: ParsedInstruction<Idl, string>, connecti
     const args = parsed.args as any
     const from = _.find(parsed.accounts, (account: ParsedAccount) => account.name == 'inputTokenAccount')!.pubkey.toBase58()
     const to = _.find(parsed.accounts, (account: ParsedAccount) => account.name == 'outputTokenAccount')!.pubkey.toBase58()
+    const slippage = (1 + (parseInt(args.inAmountWithSlippage.slippageBps) / 10000))
+    const amountIn = Number(args.inAmountWithSlippage.amount) * (slippage > 0 ? slippage : 1)
     return {
         data: {
             from,
             to,
-            amountIn: Number('0x' + args.inAmountWithSlippage.amount),
-            amountOut: Number('0x' + args.outAmount),
+            amountIn: amountIn,
+            amountOut: Number(args.outAmount),
             protocol: 'JUPITER'
-        }
+        },
     }
 }
 
@@ -35,7 +37,7 @@ export default async (parsed: ParsedInstruction<Idl, string>, connection: Connec
         .otherwise(async () =>
             new Promise<HumanizeMatchResult>(async (resolve,) => resolve(['UNKNOWN', (await defaultHandler(parsed))])))
 
-    console.log('Jupiter Program V2:', partialTransaction)
+    console.log('Jupiter Program V4:', partialTransaction)
 
     return {
         data: partialTransaction.data!,

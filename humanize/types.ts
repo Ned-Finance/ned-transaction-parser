@@ -1,5 +1,5 @@
 import { Connection } from "@solana/web3.js"
-import { SolanaParserToken } from "../parser"
+import { SolanaParserToken } from ".."
 
 export type ParsedType =
     'LIST_NFT' |
@@ -127,6 +127,7 @@ export type ReadableParsedTransaction = {
     type: ParsedType
     data: DataTransaction
     instructions?: ReadableParsedInstruction[]
+    date?: number | null
 }
 
 
