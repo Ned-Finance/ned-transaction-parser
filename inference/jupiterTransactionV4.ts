@@ -45,8 +45,7 @@ const jupiterTransactionV4 = async (props: InferenceFnProps): Promise<InferenceR
 
         return {
             type: 'JUPITER_SWAP_V4',
-            data: swapData,
-            instructions
+            data: swapData
         }
     } else return null
 

@@ -129,6 +129,7 @@ export type ReadableParsedTransaction = {
     data: DataTransaction
     instructions?: ReadableParsedInstruction[]
     date?: number | null
+    fee?: number
 }
 
 
@@ -139,4 +140,6 @@ export type InferenceFnProps = {
     connection: Connection
 }
 
-export type InferenceResult = ReadableParsedTransaction | null
+export type InferenceSucess = { type: ParsedType, data: DataTransaction }
+
+export type InferenceResult = InferenceSucess | null

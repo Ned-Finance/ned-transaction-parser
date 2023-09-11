@@ -6,8 +6,7 @@ const unknown = async (props: InferenceFnProps): Promise<InferenceResult> => {
 
     return {
         type: 'UNKNOWN',
-        data: {},
-        instructions
+        data: {}
     }
 }
 

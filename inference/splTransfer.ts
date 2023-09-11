@@ -78,8 +78,8 @@ const splTransfer = async (props: InferenceFnProps): Promise<InferenceResult> =>
                     ...tokenObject,
                     amount,
                     action: getAction()
-                },
-                instructions
+                }
+
             }
         } else {
             return null

@@ -4,7 +4,7 @@ import { ParsedInstruction, SolanaParser as SolanaParserCore, flattenTransaction
 import { Connection, Finality, Message, VersionedMessage } from "@solana/web3.js";
 import _ from "lodash";
 import { humanizeUnknown } from "./humanize/fn/unknown";
-import { ReadableParsedInstruction, ReadableParsedTransaction } from "./humanize/types";
+import { InferenceSucess, ReadableParsedInstruction, ReadableParsedTransaction } from "./humanize/types";
 import jupiterTransaction from "./inference/jupiterTransaction";
 import jupiterTransactionV2 from "./inference/jupiterTransactionV2";
 import jupiterTransactionV4 from "./inference/jupiterTransactionV4";
@@ -82,7 +82,7 @@ export default class SolanaParser {
         // }))
     }
 
-    private async inferTransactionType(instructions: ReadableParsedInstruction[]): Promise<ReadableParsedTransaction> {
+    private async inferTransactionType(instructions: ReadableParsedInstruction[]): Promise<InferenceSucess> {
         // console.log('prettyLog.info', prettyLog.debug.caller)
         prettyLog.info('Starting inference...')
         prettyLog.debug(instructions)
@@ -108,16 +108,21 @@ export default class SolanaParser {
 
         prettyLog.info('Inference ended...')
         console.log('transactionsParsed', JSON.stringify(transactionsParsed, undefined, 2))
-        const parsed = _.first(transactionsParsed.filter(t => !_.isNull(t))) as Omit<ReadableParsedTransaction, "date">
+        const parsed = _.first(transactionsParsed.filter(t => !_.isNull(t))) as InferenceSucess
         return parsed
 
     }
 
-    private async nedParser(instructions: ParsedInstruction<Idl, string>[]): Promise<ReadableParsedTransaction> {
+    private async nedParser(instructions: ParsedInstruction<Idl, string>[]): Promise<InferenceSucess & { instructions: ReadableParsedInstruction[] }> {
         const knownPrograms = (protocolsPrograms as Program[]).concat(solanaPrograms as Program[])
 
         const parsedInstructions = await this.parseProgramInstructions(instructions, knownPrograms)
-        return this.inferTransactionType(parsedInstructions)
+        const inferenceTransactions = await this.inferTransactionType(parsedInstructions)
+
+        return {
+            ...inferenceTransactions,
+            instructions: parsedInstructions
+        }
     }
 
     async parseTransaction(txId: string, commitment?: Finality): Promise<ReadableParsedTransaction | null> {
@@ -126,12 +131,11 @@ export default class SolanaParser {
         const transaction = await this._connection.getTransaction(txId, { commitment: commitment, maxSupportedTransactionVersion: 0 });
         if (!transaction) return null;
         const parsedInstructions = flattenTransactionResponse(transaction).map((ix) => this._txParser.parseInstruction(ix));
-        // const parsedInstructions = await this._txParser.parseTransaction(this._connection, txId, true, commitment)
-        // console.log('parsedInstructions ===>', JSON.stringify(parsedInstructions, undefined, 2))
         if (parsedInstructions)
             return {
                 ...(await this.nedParser(parsedInstructions)),
-                date: transaction.blockTime
+                date: transaction.blockTime,
+                fee: transaction.meta?.fee
             }
         else return null
     }

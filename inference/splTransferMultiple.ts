@@ -88,8 +88,7 @@ const splTransferMultiple = async (props: InferenceFnProps): Promise<InferenceRe
                             ...tokenObject,
                             amount,
                             action: getAction()
-                        },
-                        instructions
+                        }
                     })
                 } else {
                     return resolve(null)

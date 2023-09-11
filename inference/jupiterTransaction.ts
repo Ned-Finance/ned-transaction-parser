@@ -25,8 +25,7 @@ const jupiterTransaction = async (props: InferenceFnProps): Promise<InferenceRes
                     ...tokenToObject,
                     amount: toAmount,
                 }
-            },
-            instructions
+            }
         }
     } else return null
 
