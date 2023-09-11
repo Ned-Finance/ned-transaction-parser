@@ -130,6 +130,8 @@ export type ReadableParsedTransaction = {
     instructions?: ReadableParsedInstruction[]
     date?: number | null
     fee?: number
+    txId?: string
+    success?: boolean
 }
 
 

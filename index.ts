@@ -135,7 +135,9 @@ export default class SolanaParser {
             return {
                 ...(await this.nedParser(parsedInstructions)),
                 date: transaction.blockTime,
-                fee: transaction.meta?.fee
+                fee: transaction.meta?.fee,
+                txId,
+                success: _.isNull(transaction.meta?.err)
             }
         else return null
     }
