@@ -1,8 +1,8 @@
-import { getAccount } from "@solana/spl-token";
+import { getAccount, getAssociatedTokenAddressSync } from "@solana/spl-token";
 import { PublicKey } from "@solana/web3.js";
 import _ from "lodash";
 import { InferenceFnProps, InferenceResult, SwapTransaction, Transfer } from "../humanize/types";
-import { getAccountMint } from "../utils/token";
+import { WSOL_ADDRESS, getAccountMint } from "../utils/token";
 
 const jupiterTransactionV4 = async (props: InferenceFnProps): Promise<InferenceResult> => {
     const { instructions, tokens, walletAddress, connection } = props
@@ -24,16 +24,26 @@ const jupiterTransactionV4 = async (props: InferenceFnProps): Promise<InferenceR
 
         const transferToOwnerIdx = (await Promise.all(transfers.map((i, index) => {
             if (index != ownerTransferIdx) {
-                return new Promise((resolve,) => {
+                return new Promise(async (resolve,) => {
                     const to = (i.data as Transfer).to
-                    const toForOwner = getAccount(connection, new PublicKey(to))
+                    const from = (i.data as Transfer).from
+                    const toForOwner = await getAccount(connection, new PublicKey(to))
                         .then(account => account.owner.toBase58() == walletAddress)
                         .catch(e => false)
-                    resolve(toForOwner)
+                    if (!toForOwner) {
+                        if (walletAddress) {
+                            const wSolAddress = getAssociatedTokenAddressSync(new PublicKey(WSOL_ADDRESS), new PublicKey(walletAddress))
+                            resolve(wSolAddress.toBase58() == to)
+                        } else resolve(false)
+
+                    } else resolve(toForOwner)
                 })
             } else return Promise.resolve(false)
 
         }))).findIndex(r => r === true)
+
+        console.log('ownerTransferIdx', ownerTransferIdx)
+        console.log('transferToOwnerIdx', transferToOwnerIdx)
 
 
         const fromOwnerInstruction = ownerTransferIdx > -1 ? transfers[ownerTransferIdx] : null
@@ -50,8 +60,6 @@ const jupiterTransactionV4 = async (props: InferenceFnProps): Promise<InferenceR
 
         const tokenFromObject = tokens.find(t => t.address == accountFrom)
         const tokenToObject = tokens.find(t => t.address == accountTo)
-
-        console.log('fromOwnerTransferData', fromOwnerTransferData)
 
         const fromAmount = () => {
             if (fromOwnerTransferData) {
