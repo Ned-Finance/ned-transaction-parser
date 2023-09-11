@@ -27,6 +27,7 @@ const parseSwapRaydium = async (parsed: ParsedInstruction<Idl, string>, connecti
 const route = async (parsed: ParsedInstruction<Idl, string>, connection: Connection): Promise<Partial<ReadableParsedInstruction>> => {
 
     const args = parsed.args as any
+    console.log('args', args)
     const from = _.find(parsed.accounts, (account: ParsedAccount) => account.name == 'Remaining 15')!.pubkey.toBase58()
     const to = _.find(parsed.accounts, (account: ParsedAccount) => account.name == 'destinationTokenAccount')!.pubkey.toBase58()
     const slippage = (1 + (parseInt(args.slippageBps) / 10000))
@@ -36,7 +37,7 @@ const route = async (parsed: ParsedInstruction<Idl, string>, connection: Connect
             from,
             to,
             amountIn: amountIn,
-            amountOut: Number(args.outAmount),
+            amountOut: Number(args.quotedOutAmount),
             protocol: 'JUPITER'
         },
     }
