@@ -31,19 +31,24 @@ export const tokenFromMetaplex = async (tokenMint: string, connection: Connectio
         return req.json()
     }
 
-    const token = await metaplex.nfts().findByMint(
-        { mintAddress: new PublicKey(tokenMint) })
 
-    if (token) {
-        const detailsFromUri = await getNftMetadataFromUri(token.uri)
-        return {
-            name: token.name,
-            address: token.address.toBase58(),
-            symbol: token.symbol,
-            decimals: token.mint.decimals,
-            logoURI: detailsFromUri.image,
+    try {
+        const token = await metaplex.nfts().findByMint(
+            { mintAddress: new PublicKey(tokenMint) })
+        if (token) {
+            const detailsFromUri = await getNftMetadataFromUri(token.uri)
+            return {
+                name: token.name,
+                address: token.address.toBase58(),
+                symbol: token.symbol,
+                decimals: token.mint.decimals,
+                logoURI: detailsFromUri.image,
+            }
+        } else {
+            return null
         }
-    } else {
+    }
+    catch (e) {
         return null
     }
 
@@ -52,7 +57,7 @@ export const tokenFromMetaplex = async (tokenMint: string, connection: Connectio
 
 export const getAccountMint = async (address: string, walletAddress: string, connection: Connection) => {
     return await getAccount(connection, new PublicKey(address))
-        .then(result => result.address.toBase58())
+        .then(result => result.mint.toBase58())
         .catch(async (e) => {
             if (walletAddress) {
                 const deriveAddress = await getAssociatedTokenAddressSync(new PublicKey(WSOL_ADDRESS), new PublicKey(walletAddress))

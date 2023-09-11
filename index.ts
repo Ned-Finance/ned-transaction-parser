@@ -91,10 +91,11 @@ export default class SolanaParser {
             jupiterTransactionV2,
             jupiterTransactionV4,
             splTransfer,
-            splTransferMultiple,
             solTransfer,
+            splTransferMultiple,
             unknown
         ]
+
 
         const transactionsParsed = await Promise.all(
             fns.map(fn =>
@@ -107,7 +108,6 @@ export default class SolanaParser {
         )
 
         prettyLog.info('Inference ended...')
-        console.log('transactionsParsed', JSON.stringify(transactionsParsed, undefined, 2))
         const parsed = _.first(transactionsParsed.filter(t => !_.isNull(t))) as InferenceSucess
         return parsed
 

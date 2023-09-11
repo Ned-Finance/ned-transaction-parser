@@ -1,5 +1,3 @@
-import { getAccount } from "@solana/spl-token";
-import { PublicKey } from "@solana/web3.js";
 import _ from "lodash";
 import { InferenceFnProps, InferenceResult, Transfer } from "../humanize/types";
 import { getAccountMint } from "../utils/token";
@@ -13,14 +11,10 @@ const jupiterTransactionV2 = async (props: InferenceFnProps): Promise<InferenceR
 
 
         const accountFrom =
-            await getAccount(connection, new PublicKey(firstTransfer.from))
-                .then(r => r.mint.toBase58())
-                .catch(async (e) => await getAccountMint(firstTransfer.from, walletAddress || "", connection))
+            await getAccountMint(firstTransfer.from, walletAddress || "", connection)
 
         const accountTo =
-            await getAccount(connection, new PublicKey(lastTransfer.to))
-                .then(r => r.mint.toBase58())
-                .catch(async (e) => await getAccountMint(lastTransfer.to, walletAddress || "", connection))
+            await getAccountMint(lastTransfer.to, walletAddress || "", connection)
 
         const tokenFromObject = tokens.find(t => t.address == accountFrom)
         const tokenToObject = tokens.find(t => t.address == accountTo)

@@ -8,15 +8,15 @@ const splTransferMultiple = async (props: InferenceFnProps): Promise<InferenceRe
     const { instructions, tokens, walletAddress, connection } = props
     const transferInstruction = instructions.filter(i => i.type == 'SPL_TRANSFER').map(i => i.data) as Transfer[]
 
+    console.log('transferInstruction', transferInstruction)
+
     const transfersWithDataP = transferInstruction.map(instruction => {
         return new Promise(async (resolve,) => {
             const { from, to, tokenMint } = instruction
 
             const getTokenMint = async () => {
                 if (!tokenMint) {
-                    return await getAccount(connection, new PublicKey(from))
-                        .then(r => r.mint.toBase58())
-                        .catch(async (e) => await getAccountMint(from, walletAddress || "", connection))
+                    return await getAccountMint(from, walletAddress || "", connection)
                 } else {
                     return tokenMint
                 }
@@ -24,6 +24,7 @@ const splTransferMultiple = async (props: InferenceFnProps): Promise<InferenceRe
 
             const getTokenObject = async () => {
                 const tokenMintAddress = await getTokenMint()
+                console.log('tokenMintAddress', tokenMintAddress)
                 const tokenFound = tokens.find(t => t.address == tokenMintAddress)
                 if (tokenFound) return tokenFound
                 else {
@@ -32,8 +33,6 @@ const splTransferMultiple = async (props: InferenceFnProps): Promise<InferenceRe
             }
 
             const tokenObject = await getTokenObject()
-
-            console.log('tokenObject ==>', tokenObject)
 
             if (tokenObject) {
 
@@ -74,9 +73,6 @@ const splTransferMultiple = async (props: InferenceFnProps): Promise<InferenceRe
                         })
 
                 const [accountFrom, accountTo] = await Promise.all([accountFromP, accountToP])
-
-                console.log('accountFrom', from, accountFrom)
-                console.log('accountTo', to, accountTo)
 
                 if (accountFrom || accountTo) {
                     const amount = tokenObject ? instruction.amount / Math.pow(10, tokenObject.decimals) : instruction.amount
