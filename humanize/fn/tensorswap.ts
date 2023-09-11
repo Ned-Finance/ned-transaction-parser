@@ -12,9 +12,7 @@ const parseList = async (parsed: ParsedInstruction<Idl, string>, connection: Con
     const getMetadata = async (): Promise<any> => {
         if (mintAccount) {
             const metadata = await getMetadataFromAddress(connection, mintAccount.pubkey.toBase58())
-            console.log('1 metadata---->', metadata, metadata.data.uri)
             const metadataFromUri = await getNftMetadataFromUri(metadata.data.uri)
-            console.log('2 metadata---->', metadataFromUri)
             return metadataFromUri
         } else {
             return {}
@@ -22,7 +20,6 @@ const parseList = async (parsed: ParsedInstruction<Idl, string>, connection: Con
     }
 
     const metadata = await getMetadata()
-    console.log('metadata ========>', metadata)
 
     const args = parsed.args as any
     return {
@@ -64,7 +61,7 @@ export default async (parsed: ParsedInstruction<Idl, string>, connection: Connec
     console.log('Tensor Program:', partialTransaction)
 
     return {
-        ...partialTransaction,
+        data: partialTransaction.data!,
         type: getType(),
         relevance: 'PRIMARY'
 

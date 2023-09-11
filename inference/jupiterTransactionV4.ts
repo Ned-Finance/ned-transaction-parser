@@ -20,8 +20,6 @@ const jupiterTransactionV4 = async (props: InferenceFnProps): Promise<InferenceR
         const fromAmount = tokenFromObject ? data.amountIn / Math.pow(10, tokenFromObject.decimals) : data.amountIn
         const toAmount = tokenToObject ? data.amountOut / Math.pow(10, tokenToObject.decimals) : data.amountOut
 
-        console.log('fromAmount', fromAmount)
-
         const swapData = {
             tokenFrom: {
                 ...tokenFromObject,
@@ -32,8 +30,6 @@ const jupiterTransactionV4 = async (props: InferenceFnProps): Promise<InferenceR
                 amount: toAmount,
             }
         } as SwapTransaction
-
-        console.log('swapData', swapData)
 
         return {
             type: 'JUPITER_SWAP_V4',
