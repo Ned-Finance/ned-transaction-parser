@@ -7,6 +7,7 @@ export type ParsedType =
     'SEND_NFT' |
     'JUPITER_SWAP' |
     'JUPITER_SWAP_V2' |
+    'JUPITER_SWAP_V3' |
     'JUPITER_SWAP_V4' |
     'SWAP' |
     'SOL_TRANSFER' |

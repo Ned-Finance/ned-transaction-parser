@@ -1,7 +1,7 @@
-import { getAccount, getAssociatedTokenAddressSync } from "@solana/spl-token";
+import { getAccount } from "@solana/spl-token";
 import { PublicKey } from "@solana/web3.js";
 import { InferenceFnProps, InferenceResult, Swap, SwapTransaction } from "../humanize/types";
-import { WSOL_ADDRESS } from "../utils/token";
+import { getAccountMint } from "../utils/token";
 
 const jupiterTransactionV4 = async (props: InferenceFnProps): Promise<InferenceResult> => {
     const { instructions, tokens, walletAddress, connection } = props
@@ -9,22 +9,19 @@ const jupiterTransactionV4 = async (props: InferenceFnProps): Promise<InferenceR
 
     if (swap.length == 1) {
         const data = swap[0].data as Swap
-        const getAccountMint = async (address: string) => {
-            return await getAccount(connection, new PublicKey(address))
-                .then(result => result.address.toBase58())
-                .catch(async (e) => {
-                    if (walletAddress) {
-                        const deriveAddress = await getAssociatedTokenAddressSync(new PublicKey(WSOL_ADDRESS), new PublicKey(walletAddress))
-                        if (deriveAddress.toBase58() == address) return WSOL_ADDRESS
-                    } else return undefined
-                })
-        }
 
-        const fromAccountMint = await getAccountMint(data.from)
-        const toAccountMint = await getAccountMint(data.to)
+        const accountFrom =
+            await getAccount(connection, new PublicKey(data.from))
+                .then(r => r.mint.toBase58())
+                .catch(async (e) => await getAccountMint(data.from, walletAddress || "", connection))
 
-        const tokenFromObject = tokens.find(t => t.address == fromAccountMint)
-        const tokenToObject = tokens.find(t => t.address == toAccountMint)
+        const accountTo =
+            await getAccount(connection, new PublicKey(data.to))
+                .then(r => r.mint.toBase58())
+                .catch(async (e) => await getAccountMint(data.to, walletAddress || "", connection))
+
+        const tokenFromObject = tokens.find(t => t.address == accountFrom)
+        const tokenToObject = tokens.find(t => t.address == accountTo)
 
         console.log('tokenFromObject.decimals', data.amountIn, tokenFromObject?.decimals)
 

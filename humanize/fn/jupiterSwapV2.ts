@@ -3,7 +3,7 @@ import { ParsedAccount, ParsedInstruction } from "@debridge-finance/solana-trans
 import { Connection } from "@solana/web3.js";
 import _ from "lodash";
 import { match } from "ts-pattern";
-import { ParsedType, ReadableParsedInstruction } from "../types";
+import { HumanizeMatchResult, ReadableParsedInstruction } from "../types";
 import { humanizeUnknown } from "./unknown";
 
 
@@ -45,21 +45,19 @@ const defaultHandler = async (parsed: ParsedInstruction<Idl, string>): Promise<P
 
 export default async (parsed: ParsedInstruction<Idl, string>, connection: Connection): Promise<ReadableParsedInstruction> => {
 
-    const getType = (): ParsedType => match(parsed.name)
-        .with('whirlpoolSwap', () => 'JUPITER_SWAP_V2')
-        .with('raydiumSwapV2', () => 'JUPITER_SWAP_V2')
-        .otherwise(() => 'UNKNOWN') as ParsedType
-
-    const partialTransaction = await match(parsed.name)
-        .with('whirlpoolSwap', async () => await parseOrca(parsed, connection))
-        .with('raydiumSwapV2', async () => await parseSwapRaydium(parsed, connection))
-        .otherwise(async () => await defaultHandler(parsed))
+    const [type, partialTransaction]: HumanizeMatchResult = await match(parsed.name)
+        .with('whirlpoolSwap', async () =>
+            new Promise<HumanizeMatchResult>(async (resolve,) => resolve(['JUPITER_SWAP_V2', (await parseOrca(parsed, connection))])))
+        .with('raydiumSwapV2', async () =>
+            new Promise<HumanizeMatchResult>(async (resolve,) => resolve(['JUPITER_SWAP_V2', (await parseSwapRaydium(parsed, connection))])))
+        .otherwise(async () =>
+            new Promise<HumanizeMatchResult>(async (resolve,) => resolve(['UNKNOWN', (await defaultHandler(parsed))])))
 
     console.log('Jupiter Program V2:', partialTransaction)
 
     return {
-        ...partialTransaction,
-        type: getType(),
+        data: partialTransaction.data!,
+        type,
         relevance: 'PRIMARY'
 
     }

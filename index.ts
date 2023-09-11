@@ -6,6 +6,7 @@ import _ from "lodash";
 import { humanizeUnknown } from "./humanize/fn/unknown";
 import { ReadableParsedInstruction, ReadableParsedTransaction } from "./humanize/types";
 import jupiterTransaction from "./inference/jupiterTransaction";
+import jupiterTransactionV2 from "./inference/jupiterTransactionV2";
 import jupiterTransactionV4 from "./inference/jupiterTransactionV4";
 import solTransfer from "./inference/solTransfer";
 import splTransfer from "./inference/splTransfer";
@@ -86,6 +87,7 @@ export default class SolanaParser {
         prettyLog.debug(instructions)
         const fns = [
             jupiterTransaction,
+            jupiterTransactionV2,
             jupiterTransactionV4,
             splTransfer,
             solTransfer,

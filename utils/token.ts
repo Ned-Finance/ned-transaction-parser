@@ -1,4 +1,5 @@
 import { Metaplex, PublicKey } from "@metaplex-foundation/js"
+import { getAccount, getAssociatedTokenAddressSync } from "@solana/spl-token"
 import { Connection } from "@solana/web3.js"
 import { SolanaParserToken } from ".."
 
@@ -47,4 +48,15 @@ export const imageFromMetaplex = async (tokenMint: string, connection: Connectio
     }
 
 
+}
+
+export const getAccountMint = async (address: string, walletAddress: string, connection: Connection) => {
+    return await getAccount(connection, new PublicKey(address))
+        .then(result => result.address.toBase58())
+        .catch(async (e) => {
+            if (walletAddress) {
+                const deriveAddress = await getAssociatedTokenAddressSync(new PublicKey(WSOL_ADDRESS), new PublicKey(walletAddress))
+                if (deriveAddress.toBase58() == address) return WSOL_ADDRESS
+            } else return undefined
+        })
 }
