@@ -5,7 +5,7 @@ import { SolanaParserToken } from ".."
 
 export const WSOL_ADDRESS = 'So11111111111111111111111111111111111111112'
 
-export const imageFromMetaplex = async (tokenMint: string, connection: Connection): Promise<(SolanaParserToken | null)> => {
+export const tokenFromMetaplex = async (tokenMint: string, connection: Connection): Promise<(SolanaParserToken | null)> => {
 
     const metaplex = new Metaplex(connection)
 

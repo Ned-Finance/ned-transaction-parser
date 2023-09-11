@@ -10,6 +10,7 @@ import jupiterTransactionV2 from "./inference/jupiterTransactionV2";
 import jupiterTransactionV4 from "./inference/jupiterTransactionV4";
 import solTransfer from "./inference/solTransfer";
 import splTransfer from "./inference/splTransfer";
+import splTransferMultiple from "./inference/splTransferMultiple";
 import unknown from "./inference/unknown";
 import protocolsPrograms from './protocols/programs';
 import solanaPrograms from "./protocols/solana";
@@ -90,6 +91,7 @@ export default class SolanaParser {
             jupiterTransactionV2,
             jupiterTransactionV4,
             splTransfer,
+            splTransferMultiple,
             solTransfer,
             unknown
         ]

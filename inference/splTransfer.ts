@@ -3,7 +3,7 @@ import { PublicKey } from "@solana/web3.js";
 import _ from "lodash";
 import { Cache } from "../cache";
 import { InferenceFnProps, InferenceResult, Transfer } from "../humanize/types";
-import { imageFromMetaplex } from "../utils/token";
+import { tokenFromMetaplex } from "../utils/token";
 
 const splTransfer = async (props: InferenceFnProps): Promise<InferenceResult> => {
     const { instructions, tokens, walletAddress, connection } = props
@@ -16,7 +16,7 @@ const splTransfer = async (props: InferenceFnProps): Promise<InferenceResult> =>
                 const tokenFound = tokens.find(t => t.address == transfer.tokenMint)
                 if (tokenFound) return tokenFound
                 else {
-                    return await imageFromMetaplex(transfer.tokenMint!, connection)
+                    return await tokenFromMetaplex(transfer.tokenMint!, connection)
                 }
             } else {
                 if (walletAddress) {
