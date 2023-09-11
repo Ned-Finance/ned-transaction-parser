@@ -13,6 +13,7 @@ const transfer = async (parsed: ParsedInstruction<Idl, string>, connection: Conn
     const from = _.find(parsed.accounts, (account: ParsedAccount) => account.name == 'source')!.pubkey.toBase58()
     const to = _.find(parsed.accounts, (account: ParsedAccount) => account.name == 'destination')!.pubkey.toBase58()
     const tokenMint = _.find(parsed.accounts, (account: ParsedAccount) => account.name == 'tokenMint')?.pubkey.toBase58()
+    const owner = _.find(parsed.accounts, (account: ParsedAccount) => account.name == 'owner')?.pubkey.toBase58()
     const amount = Number(args.amount)
 
     return {
@@ -20,6 +21,7 @@ const transfer = async (parsed: ParsedInstruction<Idl, string>, connection: Conn
             from,
             to,
             amount,
+            owner,
             tokenMint
         }
     }

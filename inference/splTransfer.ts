@@ -8,6 +8,7 @@ import { tokenFromMetaplex } from "../utils/token";
 const splTransfer = async (props: InferenceFnProps): Promise<InferenceResult> => {
     const { instructions, tokens, walletAddress, connection } = props
     const transferInstruction = instructions.filter(i => i.type == 'SPL_TRANSFER')
+    console.log('Effort on splTransfer', (transferInstruction.length == 1))
     if (transferInstruction.length == 1) {
         const transfer = transferInstruction[0].data as Transfer
 

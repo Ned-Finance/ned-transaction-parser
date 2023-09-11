@@ -10,6 +10,7 @@ export type ParsedType =
     'JUPITER_SWAP_V3' |
     'JUPITER_SWAP_V4' |
     'SWAP' |
+    'SWAP_ORCA' |
     'SOL_TRANSFER' |
     'SPL_TRANSFER' |
     'TOKEN_MINT' |
@@ -36,6 +37,7 @@ export type Transfer = {
     to: string
     amount: number
     tokenMint?: string
+    owner?: string
 }
 
 export type TokenMint = {

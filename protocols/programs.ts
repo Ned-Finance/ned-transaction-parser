@@ -2,11 +2,13 @@ import { Idl } from '@coral-xyz/anchor';
 import jupiterSwap from '../humanize/fn/jupiterSwap';
 import jupiterSwapV2 from '../humanize/fn/jupiterSwapV2';
 import jupiterSwapV4 from '../humanize/fn/jupiterSwapV4';
+import orcaWhirpoolFn from '../humanize/fn/orcaWhirpool';
 import tensorswapFn from '../humanize/fn/tensorswap';
 import JupiterSwapIdl from '../idl/jupiter.json';
 import JupiterSwapIdlV2 from '../idl/jupiterV2.json';
 import JupiterSwapIdlV4 from '../idl/jupiterV4.json';
 import TensorSwapIdl from '../idl/tensorswap.json';
+import OrcaWhirpoolIdl from '../idl/whirlpool.json';
 import { ProtocolProgram } from './types';
 
 const protocolsPrograms: ProtocolProgram[] = [
@@ -39,6 +41,12 @@ const protocolsPrograms: ProtocolProgram[] = [
         name: "Tensor Swap",
         idl: TensorSwapIdl as unknown as Idl,
         humanizeFn: tensorswapFn
+    },
+    {
+        programId: "whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc",
+        name: "Orca Whirpool",
+        idl: OrcaWhirpoolIdl as unknown as Idl,
+        humanizeFn: orcaWhirpoolFn
     },
 ]
 

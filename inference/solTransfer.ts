@@ -3,6 +3,7 @@ import { InferenceFnProps, InferenceResult, Transfer } from "../humanize/types";
 const solTransfer = async (props: InferenceFnProps): Promise<InferenceResult> => {
     const { instructions, tokens, walletAddress, connection } = props
     const transferInstruction = instructions.filter(i => i.type == 'SOL_TRANSFER')
+    console.log('Effort on solTransfer', (transferInstruction.length == 1))
     if (transferInstruction.length == 1) {
 
         const transfer = transferInstruction[0].data as Transfer

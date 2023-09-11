@@ -4,7 +4,8 @@ import { InferenceFnProps, InferenceResult, Transfer } from "../humanize/types";
 const jupiterTransaction = async (props: InferenceFnProps): Promise<InferenceResult> => {
     const { instructions, tokens, walletAddress, connection } = props
     const swap = instructions.filter(i => i.type == 'JUPITER_SWAP')
-    if (swap.length) {
+    console.log('Effort on jupiterTransaction', (swap.length == 1))
+    if (swap.length == 1) {
         const firstTransfer = _.first(instructions.filter(i => i.type == 'SPL_TRANSFER'))!.data as Transfer
         const lastTransfer = _.last(instructions.filter(i => i.type == 'SPL_TRANSFER'))!.data as Transfer
 

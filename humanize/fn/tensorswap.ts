@@ -2,7 +2,7 @@ import { Idl } from "@coral-xyz/anchor";
 import { ParsedInstruction } from "@debridge-finance/solana-transaction-parser";
 import { Connection } from "@solana/web3.js";
 import { match } from "ts-pattern";
-import { getMetadataFromAddress, getNftMetadataFromUri } from "../../../nfts/metadata";
+import { getMetadataFromAddress, getNftMetadataFromUri } from "../../utils/nft";
 import { ParsedType, ReadableParsedInstruction } from "../types";
 
 const parseList = async (parsed: ParsedInstruction<Idl, string>, connection: Connection): Promise<Partial<ReadableParsedInstruction>> => {
@@ -20,7 +20,7 @@ const parseList = async (parsed: ParsedInstruction<Idl, string>, connection: Con
     }
 
     const metadata = await getMetadata()
-
+    console.log('metadata ====>', metadata)
     const args = parsed.args as any
     return {
         data: {
@@ -31,6 +31,7 @@ const parseList = async (parsed: ParsedInstruction<Idl, string>, connection: Con
             image: metadata.image,
         }
     }
+
 }
 
 const defaultHandler = async (parsed: ParsedInstruction<Idl, string>, connection: Connection): Promise<Partial<ReadableParsedInstruction>> => {

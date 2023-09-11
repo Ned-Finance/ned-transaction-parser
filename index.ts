@@ -4,7 +4,7 @@ import { ParsedInstruction, SolanaParser as SolanaParserCore, flattenTransaction
 import { Connection, Finality, Message, VersionedMessage } from "@solana/web3.js";
 import _ from "lodash";
 import { humanizeUnknown } from "./humanize/fn/unknown";
-import { InferenceSucess, ReadableParsedInstruction, ReadableParsedTransaction } from "./humanize/types";
+import { InferenceFnProps, InferenceResult, InferenceSucess, ReadableParsedInstruction, ReadableParsedTransaction } from "./humanize/types";
 import jupiterTransaction from "./inference/jupiterTransaction";
 import jupiterTransactionV2 from "./inference/jupiterTransactionV2";
 import jupiterTransactionV4 from "./inference/jupiterTransactionV4";
@@ -86,6 +86,7 @@ export default class SolanaParser {
         // console.log('prettyLog.info', prettyLog.debug.caller)
         prettyLog.info('Starting inference...')
         prettyLog.debug(instructions)
+
         const fns = [
             jupiterTransaction,
             jupiterTransactionV2,
@@ -96,20 +97,47 @@ export default class SolanaParser {
             unknown
         ]
 
-
-        const transactionsParsed = await Promise.all(
-            fns.map(fn =>
-                fn({
+        const firstNonNull = async (fns: ((props: InferenceFnProps) => Promise<InferenceResult>)[], index: number): Promise<InferenceSucess | null> => {
+            if (index < fns.length) {
+                const result = await fns[index]({
                     instructions,
                     tokens: this._tokens ? this._tokens : [],
                     walletAddress: this._walletAddress,
                     connection: this._connection
-                }))
-        )
+                })
 
-        prettyLog.info('Inference ended...')
-        const parsed = _.first(transactionsParsed.filter(t => !_.isNull(t))) as InferenceSucess
-        return parsed
+                // console.log('result ===>', result)
+                if (!_.isNull(result)) {
+                    // console.log('no es null ===>', result)
+                    return result
+                } else {
+                    // console.log('es null sigue llamando ===>', result)
+                    return await firstNonNull(fns, index + 1)
+                }
+            } else return null
+
+        }
+
+        // console.log('::: start transactionsParsed')
+        const result = await firstNonNull(fns, 0) as InferenceSucess
+        // console.log('result', result)
+        // console.log('::: end transactionsParsed')
+        return result
+        // console.log('::: start transactionsParsed')
+        // const transactionsParsed = await Promise.all(
+        //     fns.map(fn =>
+        //         fn({
+        //             instructions,
+        //             tokens: this._tokens ? this._tokens : [],
+        //             walletAddress: this._walletAddress,
+        //             connection: this._connection
+        //         }))
+        // )
+        // console.log('::: end transactionsParsed')
+
+        // prettyLog.info('Inference ended...')
+        // const parsed = _.first(transactionsParsed.filter(t => !_.isNull(t))) as InferenceSucess
+        // return parsed
 
     }
 

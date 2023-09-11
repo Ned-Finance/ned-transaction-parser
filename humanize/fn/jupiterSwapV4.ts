@@ -27,9 +27,10 @@ const parseSwapRaydium = async (parsed: ParsedInstruction<Idl, string>, connecti
 const route = async (parsed: ParsedInstruction<Idl, string>, connection: Connection): Promise<Partial<ReadableParsedInstruction>> => {
 
     const args = parsed.args as any
-    console.log('args', args)
-    const from = _.find(parsed.accounts, (account: ParsedAccount) => account.name == 'Remaining 15')!.pubkey.toBase58()
-    const to = _.find(parsed.accounts, (account: ParsedAccount) => account.name == 'destinationTokenAccount')!.pubkey.toBase58()
+    // console.log('args', args)
+    // console.log('parsed.accounts', parsed.accounts)
+    const from = _.find(parsed.accounts, (account: ParsedAccount) => account.name == 'Remaining 15')?.pubkey.toBase58() ?? ''
+    const to = _.find(parsed.accounts, (account: ParsedAccount) => account.name == 'destinationTokenAccount')?.pubkey.toBase58() ?? ''
     const slippage = (1 + (parseInt(args.slippageBps) / 10000))
     const amountIn = Number(args.inAmount) * (slippage > 0 ? slippage : 1)
     return {
@@ -49,6 +50,7 @@ const defaultHandler = async (parsed: ParsedInstruction<Idl, string>): Promise<P
 
 
 export default async (parsed: ParsedInstruction<Idl, string>, connection: Connection): Promise<ReadableParsedInstruction> => {
+
     const [type, partialTransaction]: HumanizeMatchResult = await match(parsed.name)
         .with('raydiumClmmSwapExactOutput', async () =>
             new Promise<HumanizeMatchResult>(async (resolve,) => resolve(['JUPITER_SWAP_V4', (await parseSwapRaydium(parsed, connection))])))
