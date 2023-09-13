@@ -7,8 +7,8 @@ import { ParsedType, ReadableParsedInstruction } from "../types";
 
 const parseList = async (parsed: ParsedInstruction<Idl, string>, connection: Connection): Promise<Partial<ReadableParsedInstruction>> => {
     const mintAccount = parsed.accounts.find(account => account.name == 'nftMint')
-    console.log('parsed.accounts', parsed.accounts)
-    console.log('mintAccount', mintAccount)
+    // console.log('parsed.accounts', parsed.accounts)
+    // console.log('mintAccount', mintAccount)
     const getMetadata = async (): Promise<any> => {
         if (mintAccount) {
             const metadata = await getMetadataFromAddress(connection, mintAccount.pubkey.toBase58())
@@ -29,6 +29,7 @@ const parseList = async (parsed: ParsedInstruction<Idl, string>, connection: Con
             nftMint: mintAccount?.pubkey.toBase58(),
             name: metadata.name,
             image: metadata.image,
+            rawInstruction: parsed,
         }
     }
 
@@ -41,7 +42,8 @@ const defaultHandler = async (parsed: ParsedInstruction<Idl, string>, connection
         data: {
             listPrice: 0,
             marketplace: 'TENSOR',
-            nftMint: undefined
+            nftMint: undefined,
+            rawInstruction: parsed
         }
     }
 }

@@ -20,7 +20,7 @@ export default async (parsed: ParsedInstruction<Idl, string>, connection: Connec
     console.log('Compute Budget program: ', partialTransaction)
 
     return {
-        ...partialTransaction,
+        data: partialTransaction.data!,
         type: 'COMPUTE_BUDGET',
         relevance: 'SECONDARY'
     }

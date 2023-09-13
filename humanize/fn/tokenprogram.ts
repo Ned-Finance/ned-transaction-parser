@@ -22,7 +22,8 @@ const transfer = async (parsed: ParsedInstruction<Idl, string>, connection: Conn
             to,
             amount,
             owner,
-            tokenMint
+            tokenMint,
+            rawInstruction: parsed
         }
     }
 }
@@ -41,7 +42,8 @@ const minTo = async (parsed: ParsedInstruction<Idl, string>, connection: Connect
             authority,
             to,
             amount,
-            tokenMint
+            tokenMint,
+            rawInstruction: parsed
         }
     }
 }

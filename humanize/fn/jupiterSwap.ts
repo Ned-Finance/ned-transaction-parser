@@ -20,7 +20,8 @@ const parseSwap = async (parsed: ParsedInstruction<Idl, string>, connection: Con
             amountIn: Number(args.inAmount),
             amountOut: Number(args.quotedOutAmount),
             authority,
-            protocol: 'JUPITER'
+            protocol: 'JUPITER',
+            rawInstruction: parsed
         }
     }
 }

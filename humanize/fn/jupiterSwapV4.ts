@@ -19,7 +19,8 @@ const parseSwapRaydium = async (parsed: ParsedInstruction<Idl, string>, connecti
             to,
             amountIn: amountIn,
             amountOut: Number(args.outAmount),
-            protocol: 'JUPITER'
+            protocol: 'JUPITER',
+            rawInstruction: parsed
         },
     }
 }
@@ -39,7 +40,8 @@ const route = async (parsed: ParsedInstruction<Idl, string>, connection: Connect
             to,
             amountIn: amountIn,
             amountOut: Number(args.quotedOutAmount),
-            protocol: 'JUPITER'
+            protocol: 'JUPITER',
+            rawInstruction: parsed
         },
     }
 }

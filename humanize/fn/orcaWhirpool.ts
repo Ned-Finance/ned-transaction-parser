@@ -17,7 +17,8 @@ const parseOrca = async (parsed: ParsedInstruction<Idl, string>, connection: Con
             to,
             amountIn: args.amountSpecifiedIsInput ? Number(args.amount) : 0,
             amountOut: 0,
-            protocol: 'ORCA'
+            protocol: 'ORCA',
+            rawInstruction: parsed
         }
     }
 }

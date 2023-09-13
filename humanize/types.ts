@@ -1,3 +1,5 @@
+import { Idl } from "@coral-xyz/anchor"
+import { ParsedInstruction } from "@debridge-finance/solana-transaction-parser"
 import { Connection } from "@solana/web3.js"
 import { SolanaParserToken } from ".."
 
@@ -24,13 +26,17 @@ export type NftMarketplaces =
     'MAGIC_EDEN' |
     'EXCHANGE_ART'
 
+export type RawInstruction = {
+    rawInstruction: ParsedInstruction<Idl, string>
+}
+
 export type Nft = {
     nftMint?: string
     listPrice: number
     marketplace: NftMarketplaces
     name?: string
     image?: string
-}
+} & RawInstruction
 
 export type Transfer = {
     from: string
@@ -38,14 +44,14 @@ export type Transfer = {
     amount: number
     tokenMint?: string
     owner?: string
-}
+} & RawInstruction
 
 export type TokenMint = {
     to: string
     authority: string
     tokenMint?: string,
     amount: number
-}
+} & RawInstruction
 
 export type SwapProtocol =
     'JUPITER' |
@@ -58,11 +64,9 @@ export type Swap = {
     amountIn: number
     amountOut: number
     protocol: SwapProtocol
-}
+} & RawInstruction
 
-export type Unknown = {
-    rawInstruction: any
-}
+export type Unknown = {} & RawInstruction
 
 export type PRIMARY = 'PRIMARY'
 export type SECONDARY = 'SECONDARY'

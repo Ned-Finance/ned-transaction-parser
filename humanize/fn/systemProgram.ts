@@ -18,7 +18,8 @@ const transfer = async (parsed: ParsedInstruction<Idl, string>, connection: Conn
         data: {
             from,
             to,
-            amount
+            amount,
+            rawInstruction: parsed
         }
     }
 }

@@ -26,7 +26,6 @@ const jupiterTransactionV4 = async (props: InferenceFnProps): Promise<InferenceR
             if (index != ownerTransferIdx) {
                 return new Promise(async (resolve,) => {
                     const to = (i.data as Transfer).to
-                    const from = (i.data as Transfer).from
                     const toForOwner = await getAccount(connection, new PublicKey(to))
                         .then(account => account.owner.toBase58() == walletAddress)
                         .catch(e => false)
@@ -41,9 +40,6 @@ const jupiterTransactionV4 = async (props: InferenceFnProps): Promise<InferenceR
             } else return Promise.resolve(false)
 
         }))).findIndex(r => r === true)
-
-        console.log('ownerTransferIdx', ownerTransferIdx)
-        console.log('transferToOwnerIdx', transferToOwnerIdx)
 
 
         const fromOwnerInstruction = ownerTransferIdx > -1 ? transfers[ownerTransferIdx] : null

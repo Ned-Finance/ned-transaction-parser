@@ -17,7 +17,8 @@ const parseOrca = async (parsed: ParsedInstruction<Idl, string>, connection: Con
             to,
             amountIn: Number(args.inAmount),
             amountOut: Number(args.minimumOutAmount),
-            protocol: 'JUPITER'
+            protocol: 'JUPITER',
+            rawInstruction: parsed
         }
     }
 }
@@ -33,7 +34,8 @@ const parseSwapRaydium = async (parsed: ParsedInstruction<Idl, string>, connecti
             to,
             amountIn: args.inAmount,
             amountOut: args.minimumOutAmount,
-            protocol: 'JUPITER'
+            protocol: 'JUPITER',
+            rawInstruction: parsed
         }
     }
 }
