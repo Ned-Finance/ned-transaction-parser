@@ -9,7 +9,7 @@ const splTransferMultiple = async (props: InferenceFnProps): Promise<InferenceRe
     const transferInstruction = instructions.filter(i => i.type == 'SPL_TRANSFER').map(i => i.data) as Transfer[]
 
     // console.log('transferInstruction', transferInstruction)
-    console.log('Effort on splTransferMultiple', (transferInstruction.length > 0))
+    // console.log('Effort on splTransferMultiple', (transferInstruction.length > 0))
 
     const transfersWithDataP = transferInstruction.map(instruction => {
 

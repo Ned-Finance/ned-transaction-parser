@@ -7,7 +7,7 @@ import { WSOL_ADDRESS, getAccountMint } from "../utils/token";
 const jupiterTransactionV4 = async (props: InferenceFnProps): Promise<InferenceResult> => {
     const { instructions, tokens, walletAddress, connection } = props
     const swap = instructions.filter(i => i.type == 'JUPITER_SWAP_V4')
-    console.log('Effort on jupiterTransactionV4', (swap.length == 1))
+    // console.log('Effort on jupiterTransactionV4', (swap.length == 1))
     if (swap.length == 1) {
 
         const transfers = instructions.filter(i => {
