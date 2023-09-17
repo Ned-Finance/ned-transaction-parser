@@ -1,6 +1,6 @@
 import { Idl } from "@coral-xyz/anchor"
 import { ParsedInstruction } from "@debridge-finance/solana-transaction-parser"
-import { Connection } from "@solana/web3.js"
+import { Connection, VersionedTransactionResponse } from "@solana/web3.js"
 import { SolanaParserToken } from ".."
 
 export type ParsedType =
@@ -137,7 +137,8 @@ export type ReadableParsedTransaction = {
     date?: number | null
     fee?: number
     txId?: string
-    success?: boolean
+    success?: boolean,
+    raw?: VersionedTransactionResponse
 }
 
 

@@ -12,6 +12,7 @@ const splTransferMultiple = async (props: InferenceFnProps): Promise<InferenceRe
     console.log('Effort on splTransferMultiple', (transferInstruction.length > 0))
 
     const transfersWithDataP = transferInstruction.map(instruction => {
+
         return new Promise(async (resolve,) => {
             const { from, to, tokenMint } = instruction
 
@@ -25,7 +26,6 @@ const splTransferMultiple = async (props: InferenceFnProps): Promise<InferenceRe
 
             const getTokenObject = async () => {
                 const tokenMintAddress = await getTokenMint()
-                console.log('tokenMintAddress', tokenMintAddress)
                 const tokenFound = tokens.find(t => t.address == tokenMintAddress)
                 if (tokenFound) return tokenFound
                 else {
@@ -49,7 +49,7 @@ const splTransferMultiple = async (props: InferenceFnProps): Promise<InferenceRe
                     }
                 }
 
-                const accountFromP =
+                const accountFromPromise =
                     getAccount(connection, new PublicKey(from))
                         .then(r => r.owner.toBase58() == walletAddress || "")
                         .catch(async (e) => {
@@ -61,7 +61,7 @@ const splTransferMultiple = async (props: InferenceFnProps): Promise<InferenceRe
                             }
                         })
 
-                const accountToP =
+                const accountToPromise =
                     getAccount(connection, new PublicKey(to))
                         .then(r => r.owner.toBase58() == walletAddress || "")
                         .catch(async (e) => {
@@ -73,7 +73,7 @@ const splTransferMultiple = async (props: InferenceFnProps): Promise<InferenceRe
                             }
                         })
 
-                const [accountFrom, accountTo] = await Promise.all([accountFromP, accountToP])
+                const [accountFrom, accountTo] = await Promise.all([accountFromPromise, accountToPromise])
 
                 if (accountFrom || accountTo) {
                     const amount = tokenObject ? instruction.amount / Math.pow(10, tokenObject.decimals) : instruction.amount

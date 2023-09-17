@@ -138,7 +138,8 @@ export default class SolanaParser {
                 date: transaction.blockTime,
                 fee: transaction.meta?.fee,
                 txId,
-                success: _.isNull(transaction.meta?.err)
+                success: _.isNull(transaction.meta?.err),
+                raw: transaction
             }
         else return null
     }
