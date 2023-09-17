@@ -1,18 +1,22 @@
-import { Metaplex, PublicKey } from "@metaplex-foundation/js";
-import { getAccount, getAssociatedTokenAddressSync } from "@solana/spl-token";
-import fetch from "cross-fetch";
-import { Cache } from "../cache";
-export const WSOL_ADDRESS = 'So11111111111111111111111111111111111111112';
-export const tokenFromMetaplex = async (tokenMint, connection) => {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getAccountMint = exports.tokenFromMetaplex = exports.WSOL_ADDRESS = void 0;
+const tslib_1 = require("tslib");
+const js_1 = require("@metaplex-foundation/js");
+const spl_token_1 = require("@solana/spl-token");
+const cross_fetch_1 = tslib_1.__importDefault(require("cross-fetch"));
+const cache_1 = require("../cache");
+exports.WSOL_ADDRESS = 'So11111111111111111111111111111111111111112';
+const tokenFromMetaplex = async (tokenMint, connection) => {
     const key = `token-${tokenMint}`;
-    const cache = Cache.ref().get(key);
+    const cache = cache_1.Cache.ref().get(key);
     if (cache) {
         return cache;
     }
     else {
-        const metaplex = new Metaplex(connection);
+        const metaplex = new js_1.Metaplex(connection);
         const getNftMetadataFromUri = async (uri) => {
-            const req = await fetch(uri, {
+            const req = await (0, cross_fetch_1.default)(uri, {
                 "headers": {
                     "accept": "*/*",
                     "accept-language": "en-US,en;q=0.6",
@@ -32,7 +36,7 @@ export const tokenFromMetaplex = async (tokenMint, connection) => {
             return req.json();
         };
         try {
-            const token = await metaplex.nfts().findByMint({ mintAddress: new PublicKey(tokenMint) });
+            const token = await metaplex.nfts().findByMint({ mintAddress: new js_1.PublicKey(tokenMint) });
             if (token) {
                 const detailsFromUri = await getNftMetadataFromUri(token.uri);
                 const tokenResult = {
@@ -42,7 +46,7 @@ export const tokenFromMetaplex = async (tokenMint, connection) => {
                     decimals: token.mint.decimals,
                     logoURI: detailsFromUri.image,
                 };
-                Cache.ref().set(key, tokenResult);
+                cache_1.Cache.ref().set(key, tokenResult);
                 return tokenResult;
             }
             else {
@@ -54,28 +58,30 @@ export const tokenFromMetaplex = async (tokenMint, connection) => {
         }
     }
 };
-export const getAccountMint = async (address, walletAddress, connection) => {
+exports.tokenFromMetaplex = tokenFromMetaplex;
+const getAccountMint = async (address, walletAddress, connection) => {
     const key = `mint-${address}-${walletAddress}`;
-    const cache = Cache.ref().get(key);
+    const cache = cache_1.Cache.ref().get(key);
     if (cache)
         return cache;
     else
-        return await getAccount(connection, new PublicKey(address))
+        return await (0, spl_token_1.getAccount)(connection, new js_1.PublicKey(address))
             .then(result => {
             const mint = result.mint.toBase58();
-            Cache.ref().set(key, mint);
+            cache_1.Cache.ref().set(key, mint);
             return mint;
         })
             .catch(async (e) => {
             if (walletAddress) {
-                const deriveAddress = await getAssociatedTokenAddressSync(new PublicKey(WSOL_ADDRESS), new PublicKey(walletAddress));
+                const deriveAddress = await (0, spl_token_1.getAssociatedTokenAddressSync)(new js_1.PublicKey(exports.WSOL_ADDRESS), new js_1.PublicKey(walletAddress));
                 if (deriveAddress.toBase58() == address) {
-                    Cache.ref().set(key, WSOL_ADDRESS);
-                    return WSOL_ADDRESS;
+                    cache_1.Cache.ref().set(key, exports.WSOL_ADDRESS);
+                    return exports.WSOL_ADDRESS;
                 }
             }
             else
                 return undefined;
         });
 };
+exports.getAccountMint = getAccountMint;
 //# sourceMappingURL=token.js.map

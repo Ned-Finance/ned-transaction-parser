@@ -152,7 +152,7 @@ export default class SolanaParser {
         return parseLogsParser(logs)
     }
 
-    parseTransactionDump(txDump: string | Buffer) {
+    parseTransactionDump(txDump: string | Buffer): ParsedInstruction<Idl, string>[] {
         const parsedInstruction = this._txParser.parseTransactionDump(txDump)
         return parsedInstruction
     }

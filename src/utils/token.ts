@@ -1,6 +1,7 @@
 import { Metaplex, PublicKey } from "@metaplex-foundation/js"
 import { getAccount, getAssociatedTokenAddressSync } from "@solana/spl-token"
 import { Connection } from "@solana/web3.js"
+import fetch from "cross-fetch"
 import { SolanaParserToken } from ".."
 import { Cache } from "../cache"
 
