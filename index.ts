@@ -1,4 +1,3 @@
-import { prettyLog } from "@app/utils/common/logging";
 import { Idl } from "@coral-xyz/anchor";
 import { ParsedInstruction, SolanaParser as SolanaParserCore, flattenTransactionResponse, parseLogs as parseLogsParser } from "@debridge-finance/solana-transaction-parser";
 import { Connection, Finality, Message, VersionedMessage } from "@solana/web3.js";
@@ -79,8 +78,8 @@ export default class SolanaParser {
     }
 
     private async inferTransactionType(instructions: ReadableParsedInstruction[]): Promise<InferenceSucess> {
-        prettyLog.info('Starting inference...')
-        prettyLog.debug(instructions)
+        console.log('Starting inference...')
+        console.log(instructions)
 
         const fns = [
             jupiterTransaction,
@@ -127,7 +126,7 @@ export default class SolanaParser {
     }
 
     async parseTransaction(txId: string, commitment?: Finality): Promise<ReadableParsedTransaction | null> {
-        prettyLog.info('Start parsing transaction %s', txId)
+        console.log('Start parsing transaction %s', txId)
 
         const transaction = await this._connection.getTransaction(txId, { commitment: commitment, maxSupportedTransactionVersion: 0 });
         if (!transaction) return null;
