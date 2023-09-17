@@ -42,8 +42,8 @@ export default class SolanaParser {
         // }))
     }
     async inferTransactionType(instructions) {
-        console.log('Starting inference...');
-        console.log(instructions);
+        // console.debug('Starting inference...')
+        // console.debug(instructions)
         const fns = [
             jupiterTransaction,
             jupiterTransactionV2,
@@ -84,8 +84,8 @@ export default class SolanaParser {
         };
     }
     async parseTransaction(txId, commitment) {
+        // console.log('Start parsing transaction %s', txId)
         var _a, _b;
-        console.log('Start parsing transaction %s', txId);
         const transaction = await this._connection.getTransaction(txId, { commitment: commitment, maxSupportedTransactionVersion: 0 });
         if (!transaction)
             return null;

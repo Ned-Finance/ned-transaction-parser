@@ -5,7 +5,7 @@ const lodash_1 = tslib_1.__importDefault(require("lodash"));
 const jupiterTransaction = async (props) => {
     const { instructions, tokens, walletAddress, connection } = props;
     const swap = instructions.filter(i => i.type == 'JUPITER_SWAP');
-    console.log('Effort on jupiterTransaction', (swap.length == 1));
+    // console.log('Effort on jupiterTransaction', (swap.length == 1))
     if (swap.length == 1) {
         const firstTransfer = lodash_1.default.first(instructions.filter(i => i.type == 'SPL_TRANSFER')).data;
         const lastTransfer = lodash_1.default.last(instructions.filter(i => i.type == 'SPL_TRANSFER')).data;

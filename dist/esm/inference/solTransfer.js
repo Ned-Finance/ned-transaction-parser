@@ -1,7 +1,7 @@
 const solTransfer = async (props) => {
     const { instructions, tokens, walletAddress, connection } = props;
     const transferInstruction = instructions.filter(i => i.type == 'SOL_TRANSFER');
-    console.log('Effort on solTransfer', (transferInstruction.length == 1));
+    // console.log('Effort on solTransfer', (transferInstruction.length == 1))
     if (transferInstruction.length == 1) {
         const transfer = transferInstruction[0].data;
         const tokenObject = {

@@ -9,7 +9,7 @@ const token_1 = require("../utils/token");
 const splTransfer = async (props) => {
     const { instructions, tokens, walletAddress, connection } = props;
     const transferInstruction = instructions.filter(i => i.type == 'SPL_TRANSFER');
-    console.log('Effort on splTransfer', (transferInstruction.length == 1));
+    // console.log('Effort on splTransfer', (transferInstruction.length == 1))
     if (transferInstruction.length == 1) {
         const transfer = transferInstruction[0].data;
         const tokenObject = await (async () => {

@@ -9,7 +9,7 @@ const splTransferMultiple = async (props) => {
     const { instructions, tokens, walletAddress, connection } = props;
     const transferInstruction = instructions.filter(i => i.type == 'SPL_TRANSFER').map(i => i.data);
     // console.log('transferInstruction', transferInstruction)
-    console.log('Effort on splTransferMultiple', (transferInstruction.length > 0));
+    // console.log('Effort on splTransferMultiple', (transferInstruction.length > 0))
     const transfersWithDataP = transferInstruction.map(instruction => {
         return new Promise(async (resolve) => {
             const { from, to, tokenMint } = instruction;

@@ -16,23 +16,7 @@ const tokenFromMetaplex = async (tokenMint, connection) => {
     else {
         const metaplex = new js_1.Metaplex(connection);
         const getNftMetadataFromUri = async (uri) => {
-            const req = await (0, cross_fetch_1.default)(uri, {
-                "headers": {
-                    "accept": "*/*",
-                    "accept-language": "en-US,en;q=0.6",
-                    "cache-control": "no-cache",
-                    "pragma": "no-cache",
-                    "sec-ch-ua": "\"Not/A)Brand\";v=\"99\", \"Brave\";v=\"115\", \"Chromium\";v=\"115\"",
-                    "sec-ch-ua-mobile": "?0",
-                    "sec-ch-ua-platform": "\"macOS\"",
-                    "sec-fetch-dest": "empty",
-                    "sec-fetch-mode": "cors",
-                    "sec-fetch-site": "cross-site",
-                    "sec-gpc": "1"
-                },
-                "body": null,
-                "method": "GET",
-            });
+            const req = await (0, cross_fetch_1.default)(uri.replace(/[^a-zA-Z0-9 \.\:\/\-]/g, ""));
             return req.json();
         };
         try {

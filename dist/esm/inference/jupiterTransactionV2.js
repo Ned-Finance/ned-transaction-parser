@@ -3,7 +3,7 @@ import { getAccountMint } from "../utils/token";
 const jupiterTransactionV2 = async (props) => {
     const { instructions, tokens, walletAddress, connection } = props;
     const swap = instructions.filter(i => i.type == 'JUPITER_SWAP_V2');
-    console.log('Effort on jupiterTransactionV2', (swap.length == 1));
+    // console.log('Effort on jupiterTransactionV2', (swap.length == 1))
     if (swap.length == 1) {
         const firstTransfer = _.first(instructions.filter(i => i.type == 'SPL_TRANSFER')).data;
         const lastTransfer = _.last(instructions.filter(i => i.type == 'SPL_TRANSFER')).data;
