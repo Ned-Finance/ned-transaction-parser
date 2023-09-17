@@ -20,7 +20,7 @@ const parseList = async (parsed: ParsedInstruction<Idl, string>, connection: Con
     }
 
     const metadata = await getMetadata()
-    console.log('metadata ====>', metadata)
+    // console.log('metadata ====>', metadata)
     const args = parsed.args as any
     return {
         data: {

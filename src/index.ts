@@ -78,8 +78,8 @@ export default class SolanaParser {
     }
 
     private async inferTransactionType(instructions: ReadableParsedInstruction[]): Promise<InferenceSucess> {
-        console.log('Starting inference...')
-        console.log(instructions)
+        // console.debug('Starting inference...')
+        // console.debug(instructions)
 
         const fns = [
             jupiterTransaction,
@@ -126,7 +126,7 @@ export default class SolanaParser {
     }
 
     async parseTransaction(txId: string, commitment?: Finality): Promise<ReadableParsedTransaction | null> {
-        console.log('Start parsing transaction %s', txId)
+        // console.log('Start parsing transaction %s', txId)
 
         const transaction = await this._connection.getTransaction(txId, { commitment: commitment, maxSupportedTransactionVersion: 0 });
         if (!transaction) return null;
