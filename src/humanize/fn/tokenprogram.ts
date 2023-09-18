@@ -64,7 +64,7 @@ export default async (parsed: ParsedInstruction<Idl, string>, connection: Connec
         .otherwise(async () =>
             new Promise<HumanizeMatchResult>(async (resolve,) => resolve(['UNKNOWN', (await defaultHandler(parsed, connection))])))
 
-    console.log('Token program: ', partialTransaction)
+    // console.log('Token program: ', partialTransaction)
 
     return {
         data: partialTransaction.data!,

@@ -33,7 +33,7 @@ const getMetadataFromAddress = async (connection, mint) => {
         new web3_js_1.PublicKey(mpl_token_metadata_1.PROGRAM_ADDRESS).toBuffer(),
         new web3_js_1.PublicKey(mint).toBuffer()
     ], new web3_js_1.PublicKey(mpl_token_metadata_1.PROGRAM_ADDRESS));
-    console.log('publicKey', publicKey);
+    // console.log('publicKey', publicKey)
     const metadataPDA = await mpl_token_metadata_1.Metadata.fromAccountAddress(connection, publicKey);
     return metadataPDA;
 };

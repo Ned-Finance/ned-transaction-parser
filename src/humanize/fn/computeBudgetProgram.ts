@@ -17,7 +17,7 @@ export default async (parsed: ParsedInstruction<Idl, string>, connection: Connec
 
     const partialTransaction = await parse(parsed, connection)
 
-    console.log('Compute Budget program: ', partialTransaction)
+    // console.log('Compute Budget program: ', partialTransaction)
 
     return {
         data: partialTransaction.data!,

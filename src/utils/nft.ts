@@ -37,7 +37,7 @@ export const getMetadataFromAddress = async (connection: Connection, mint: strin
         new PublicKey(PROGRAM_ADDRESS)
     );
 
-    console.log('publicKey', publicKey)
+    // console.log('publicKey', publicKey)
 
     const metadataPDA = await Metadata.fromAccountAddress(
         connection, publicKey)

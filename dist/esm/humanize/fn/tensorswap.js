@@ -49,7 +49,7 @@ export default async (parsed, connection) => {
         .with('list', async () => await parseList(parsed, connection))
         .with('editSingleListing', async () => await parseList(parsed, connection))
         .otherwise(async () => await defaultHandler(parsed, connection));
-    console.log('Tensor Program:', partialTransaction);
+    // console.log('Tensor Program:', partialTransaction)
     return {
         data: partialTransaction.data,
         type: getType(),

@@ -46,7 +46,7 @@ export default async (parsed, connection) => {
         .with('transferChecked', async () => new Promise(async (resolve) => resolve(['SPL_TRANSFER', (await transfer(parsed, connection))])))
         .with('mintTo', async () => new Promise(async (resolve) => resolve(['TOKEN_MINT', (await minTo(parsed, connection))])))
         .otherwise(async () => new Promise(async (resolve) => resolve(['UNKNOWN', (await defaultHandler(parsed, connection))])));
-    console.log('Token program: ', partialTransaction);
+    // console.log('Token program: ', partialTransaction)
     return {
         data: partialTransaction.data,
         type,

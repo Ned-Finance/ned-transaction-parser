@@ -39,7 +39,7 @@ export default async (parsed, connection) => {
         .with('whirlpoolSwap', async () => new Promise(async (resolve) => resolve(['JUPITER_SWAP_V2', (await parseOrca(parsed, connection))])))
         .with('raydiumSwapV2', async () => new Promise(async (resolve) => resolve(['JUPITER_SWAP_V2', (await parseSwapRaydium(parsed, connection))])))
         .otherwise(async () => new Promise(async (resolve) => resolve(['UNKNOWN', (await defaultHandler(parsed))])));
-    console.log('Jupiter Program V2:', partialTransaction);
+    // console.log('Jupiter Program V2:', partialTransaction)
     return {
         data: partialTransaction.data,
         type,

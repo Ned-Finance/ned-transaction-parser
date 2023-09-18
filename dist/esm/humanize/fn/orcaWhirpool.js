@@ -23,7 +23,7 @@ export default async (parsed, connection) => {
     const [type, partialTransaction] = await match(parsed.name)
         .with('swap', async () => new Promise(async (resolve) => resolve(['SWAP_ORCA', (await parseOrca(parsed, connection))])))
         .otherwise(async () => new Promise(async (resolve) => resolve(['UNKNOWN', (await defaultHandler(parsed))])));
-    console.log('Jupiter Program V4:', partialTransaction);
+    // console.log('Jupiter Program V4:', partialTransaction)
     return {
         data: partialTransaction.data,
         type: type,

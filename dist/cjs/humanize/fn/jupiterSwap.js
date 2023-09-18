@@ -31,7 +31,7 @@ exports.default = async (parsed, connection) => {
     const partialTransaction = await (0, ts_pattern_1.match)(parsed.name)
         .with('sharedAccountsRoute', async () => await parseSwap(parsed, connection))
         .otherwise(async () => await defaultHandler(parsed));
-    console.log('Jupiter Program:', partialTransaction);
+    // console.log('Jupiter Program:', partialTransaction)
     return {
         data: partialTransaction.data,
         type: getType(),

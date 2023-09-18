@@ -9,7 +9,7 @@ const parse = async (parsed, connection) => {
 };
 exports.default = async (parsed, connection) => {
     const partialTransaction = await parse(parsed, connection);
-    console.log('Compute Budget program: ', partialTransaction);
+    // console.log('Compute Budget program: ', partialTransaction)
     return {
         data: partialTransaction.data,
         type: 'COMPUTE_BUDGET',

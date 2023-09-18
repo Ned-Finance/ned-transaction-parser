@@ -41,7 +41,7 @@ export default async (parsed: ParsedInstruction<Idl, string>, connection: Connec
         .with('sharedAccountsRoute', async () => await parseSwap(parsed, connection))
         .otherwise(async () => await defaultHandler(parsed))
 
-    console.log('Jupiter Program:', partialTransaction)
+    // console.log('Jupiter Program:', partialTransaction)
 
     return {
         data: partialTransaction.data!,

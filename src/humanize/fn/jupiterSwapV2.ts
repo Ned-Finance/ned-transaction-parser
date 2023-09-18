@@ -55,7 +55,7 @@ export default async (parsed: ParsedInstruction<Idl, string>, connection: Connec
         .otherwise(async () =>
             new Promise<HumanizeMatchResult>(async (resolve,) => resolve(['UNKNOWN', (await defaultHandler(parsed))])))
 
-    console.log('Jupiter Program V2:', partialTransaction)
+    // console.log('Jupiter Program V2:', partialTransaction)
 
     return {
         data: partialTransaction.data!,
