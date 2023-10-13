@@ -1,33 +1,29 @@
-import _ from "lodash";
-import { InferenceFnProps, InferenceResult, Transfer } from "../humanize/types";
+import { InferenceFnProps, InferenceResult, Swap } from "../humanize/types";
 
 const jupiterTransaction = async (
 	props: InferenceFnProps
 ): Promise<InferenceResult> => {
 	const { instructions, tokens, walletAddress, connection } = props;
 	const swap = instructions.filter((i) => i.type == "JUPITER_SWAP");
-	console.log("Effort on jupiterTransaction", JSON.stringify(instructions));
 	if (swap.length == 1) {
-		const firstTransfer = _.first(
-			instructions.filter((i) => i.type == "SPL_TRANSFER")
-		)!.data as Transfer;
-		const lastTransfer = _.last(
-			instructions.filter((i) => i.type == "SPL_TRANSFER")
-		)!.data as Transfer;
+		const instruction = swap[0];
+		const instructionData = instruction.data as Swap;
+		const sourceMint = instruction.data.rawInstruction.accounts
+			.find((x) => x.name == "sourceMint")
+			?.pubkey.toBase58();
+		const destinationMint = instruction.data.rawInstruction.accounts
+			.find((x) => x.name == "destinationMint")
+			?.pubkey.toBase58();
 
-		const tokenFromObject = tokens.find(
-			(t) => t.address == firstTransfer.tokenMint
-		);
-		const tokenToObject = tokens.find(
-			(t) => t.address == lastTransfer.tokenMint
-		);
+		const tokenFromObject = tokens.find((t) => t.address == sourceMint);
+		const tokenToObject = tokens.find((t) => t.address == destinationMint);
 
 		const fromAmount = tokenFromObject
-			? firstTransfer.amount / Math.pow(10, tokenFromObject.decimals)
-			: firstTransfer.amount;
+			? instructionData.amountIn / Math.pow(10, tokenFromObject.decimals)
+			: instructionData.amountIn;
 		const toAmount = tokenToObject
-			? lastTransfer.amount / Math.pow(10, tokenToObject.decimals)
-			: lastTransfer.amount;
+			? instructionData.amountOut / Math.pow(10, tokenToObject.decimals)
+			: instructionData.amountOut;
 
 		return {
 			type: "JUPITER_SWAP",

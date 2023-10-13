@@ -1,19 +1,22 @@
-import _ from "lodash";
 const jupiterTransaction = async (props) => {
+    var _a, _b;
     const { instructions, tokens, walletAddress, connection } = props;
     const swap = instructions.filter((i) => i.type == "JUPITER_SWAP");
-    console.log("Effort on jupiterTransaction", JSON.stringify(instructions));
     if (swap.length == 1) {
-        const firstTransfer = _.first(instructions.filter((i) => i.type == "SPL_TRANSFER")).data;
-        const lastTransfer = _.last(instructions.filter((i) => i.type == "SPL_TRANSFER")).data;
-        const tokenFromObject = tokens.find((t) => t.address == firstTransfer.tokenMint);
-        const tokenToObject = tokens.find((t) => t.address == lastTransfer.tokenMint);
+        const instruction = swap[0];
+        const instructionData = instruction.data;
+        const sourceMint = (_a = instruction.data.rawInstruction.accounts
+            .find((x) => x.name == "sourceMint")) === null || _a === void 0 ? void 0 : _a.pubkey.toBase58();
+        const destinationMint = (_b = instruction.data.rawInstruction.accounts
+            .find((x) => x.name == "destinationMint")) === null || _b === void 0 ? void 0 : _b.pubkey.toBase58();
+        const tokenFromObject = tokens.find((t) => t.address == sourceMint);
+        const tokenToObject = tokens.find((t) => t.address == destinationMint);
         const fromAmount = tokenFromObject
-            ? firstTransfer.amount / Math.pow(10, tokenFromObject.decimals)
-            : firstTransfer.amount;
+            ? instructionData.amountIn / Math.pow(10, tokenFromObject.decimals)
+            : instructionData.amountIn;
         const toAmount = tokenToObject
-            ? lastTransfer.amount / Math.pow(10, tokenToObject.decimals)
-            : lastTransfer.amount;
+            ? instructionData.amountOut / Math.pow(10, tokenToObject.decimals)
+            : instructionData.amountOut;
         return {
             type: "JUPITER_SWAP",
             data: {
