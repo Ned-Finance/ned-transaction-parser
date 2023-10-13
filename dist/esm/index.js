@@ -1,4 +1,4 @@
-import { SolanaParser as SolanaParserCore, flattenTransactionResponse, parseLogs as parseLogsParser } from "@debridge-finance/solana-transaction-parser";
+import { SolanaParser as SolanaParserCore, flattenTransactionResponse, parseLogs as parseLogsParser, } from "@debridge-finance/solana-transaction-parser";
 import _ from "lodash";
 import { humanizeUnknown } from "./humanize/fn/unknown";
 import jupiterTransaction from "./inference/jupiterTransaction";
@@ -8,7 +8,7 @@ import solTransfer from "./inference/solTransfer";
 import splTransfer from "./inference/splTransfer";
 import splTransferMultiple from "./inference/splTransferMultiple";
 import unknown from "./inference/unknown";
-import protocolsPrograms from './protocols/programs';
+import protocolsPrograms from "./protocols/programs";
 import solanaPrograms from "./protocols/solana";
 export default class SolanaParser {
     constructor(config) {
@@ -18,25 +18,27 @@ export default class SolanaParser {
         this._txParser = new SolanaParserCore(protocolsPrograms);
     }
     async parseProgramInstructions(instructions, programs) {
-        const programsFound = instructions.map(instruction => programs.find(program => {
+        const programsFound = instructions
+            .map((instruction) => programs.find((program) => {
             return instruction.programId.toBase58() == program.programId;
-        })).filter(program => !_.isUndefined(program));
+        }))
+            .filter((program) => !_.isUndefined(program));
         const parsed = instructions.map((instruction) => {
-            const program = programsFound.find(p => p.programId == instruction.programId.toBase58());
+            const program = programsFound.find((p) => p.programId == instruction.programId.toBase58());
             if (program)
                 return program.humanizeFn(instruction, this._connection);
             else
                 return this.parseUnknownInstructions(instruction);
         });
-        return (await Promise.all(parsed)).filter(p => !_.isUndefined(p));
+        return (await Promise.all(parsed)).filter((p) => !_.isUndefined(p));
     }
     async parseUnknownInstructions(instruction) {
         return new Promise(async (resolve) => {
             const parsed = await humanizeUnknown(instruction);
             resolve({
                 data: parsed.data,
-                type: 'UNKNOWN',
-                relevance: 'SECONDARY'
+                type: "UNKNOWN",
+                relevance: "SECONDARY",
             });
         });
         // }))
@@ -51,7 +53,7 @@ export default class SolanaParser {
             splTransfer,
             solTransfer,
             splTransferMultiple,
-            unknown
+            unknown,
         ];
         const firstNonNull = async (fns, index) => {
             if (index < fns.length) {
@@ -59,7 +61,7 @@ export default class SolanaParser {
                     instructions,
                     tokens: this._tokens ? this._tokens : [],
                     walletAddress: this._walletAddress,
-                    connection: this._connection
+                    connection: this._connection,
                 });
                 if (!_.isNull(result)) {
                     return result;
@@ -71,7 +73,7 @@ export default class SolanaParser {
             else
                 return null;
         };
-        const result = await firstNonNull(fns, 0);
+        const result = (await firstNonNull(fns, 0));
         return result;
     }
     async nedParser(instructions) {
@@ -80,13 +82,16 @@ export default class SolanaParser {
         const inferenceTransactions = await this.inferTransactionType(parsedInstructions);
         return {
             ...inferenceTransactions,
-            instructions: parsedInstructions
+            instructions: parsedInstructions,
         };
     }
     async parseTransaction(txId, commitment) {
         // console.log('Start parsing transaction %s', txId)
         var _a, _b;
-        const transaction = await this._connection.getTransaction(txId, { commitment: commitment, maxSupportedTransactionVersion: 0 });
+        const transaction = await this._connection.getTransaction(txId, {
+            commitment: commitment,
+            maxSupportedTransactionVersion: 0,
+        });
         if (!transaction)
             return null;
         const parsedInstructions = flattenTransactionResponse(transaction).map((ix) => this._txParser.parseInstruction(ix));
@@ -97,13 +102,13 @@ export default class SolanaParser {
                 fee: (_a = transaction.meta) === null || _a === void 0 ? void 0 : _a.fee,
                 txId,
                 success: _.isNull((_b = transaction.meta) === null || _b === void 0 ? void 0 : _b.err),
-                raw: transaction
+                raw: transaction,
             };
         else
             return null;
     }
-    async parseInstruction(message) {
-        const parsedInstructions = this._txParser.parseTransactionData(message);
+    async parseInstruction(message, altLoadedAddresses) {
+        const parsedInstructions = this._txParser.parseTransactionData(message, altLoadedAddresses);
         return await this.nedParser(parsedInstructions);
     }
     parseLogs(logs) {

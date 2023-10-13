@@ -21,25 +21,27 @@ class SolanaParser {
         this._txParser = new solana_transaction_parser_1.SolanaParser(programs_1.default);
     }
     async parseProgramInstructions(instructions, programs) {
-        const programsFound = instructions.map(instruction => programs.find(program => {
+        const programsFound = instructions
+            .map((instruction) => programs.find((program) => {
             return instruction.programId.toBase58() == program.programId;
-        })).filter(program => !lodash_1.default.isUndefined(program));
+        }))
+            .filter((program) => !lodash_1.default.isUndefined(program));
         const parsed = instructions.map((instruction) => {
-            const program = programsFound.find(p => p.programId == instruction.programId.toBase58());
+            const program = programsFound.find((p) => p.programId == instruction.programId.toBase58());
             if (program)
                 return program.humanizeFn(instruction, this._connection);
             else
                 return this.parseUnknownInstructions(instruction);
         });
-        return (await Promise.all(parsed)).filter(p => !lodash_1.default.isUndefined(p));
+        return (await Promise.all(parsed)).filter((p) => !lodash_1.default.isUndefined(p));
     }
     async parseUnknownInstructions(instruction) {
         return new Promise(async (resolve) => {
             const parsed = await (0, unknown_1.humanizeUnknown)(instruction);
             resolve({
                 data: parsed.data,
-                type: 'UNKNOWN',
-                relevance: 'SECONDARY'
+                type: "UNKNOWN",
+                relevance: "SECONDARY",
             });
         });
         // }))
@@ -54,7 +56,7 @@ class SolanaParser {
             splTransfer_1.default,
             solTransfer_1.default,
             splTransferMultiple_1.default,
-            unknown_2.default
+            unknown_2.default,
         ];
         const firstNonNull = async (fns, index) => {
             if (index < fns.length) {
@@ -62,7 +64,7 @@ class SolanaParser {
                     instructions,
                     tokens: this._tokens ? this._tokens : [],
                     walletAddress: this._walletAddress,
-                    connection: this._connection
+                    connection: this._connection,
                 });
                 if (!lodash_1.default.isNull(result)) {
                     return result;
@@ -74,7 +76,7 @@ class SolanaParser {
             else
                 return null;
         };
-        const result = await firstNonNull(fns, 0);
+        const result = (await firstNonNull(fns, 0));
         return result;
     }
     async nedParser(instructions) {
@@ -83,13 +85,16 @@ class SolanaParser {
         const inferenceTransactions = await this.inferTransactionType(parsedInstructions);
         return {
             ...inferenceTransactions,
-            instructions: parsedInstructions
+            instructions: parsedInstructions,
         };
     }
     async parseTransaction(txId, commitment) {
         // console.log('Start parsing transaction %s', txId)
         var _a, _b;
-        const transaction = await this._connection.getTransaction(txId, { commitment: commitment, maxSupportedTransactionVersion: 0 });
+        const transaction = await this._connection.getTransaction(txId, {
+            commitment: commitment,
+            maxSupportedTransactionVersion: 0,
+        });
         if (!transaction)
             return null;
         const parsedInstructions = (0, solana_transaction_parser_1.flattenTransactionResponse)(transaction).map((ix) => this._txParser.parseInstruction(ix));
@@ -100,13 +105,13 @@ class SolanaParser {
                 fee: (_a = transaction.meta) === null || _a === void 0 ? void 0 : _a.fee,
                 txId,
                 success: lodash_1.default.isNull((_b = transaction.meta) === null || _b === void 0 ? void 0 : _b.err),
-                raw: transaction
+                raw: transaction,
             };
         else
             return null;
     }
-    async parseInstruction(message) {
-        const parsedInstructions = this._txParser.parseTransactionData(message);
+    async parseInstruction(message, altLoadedAddresses) {
+        const parsedInstructions = this._txParser.parseTransactionData(message, altLoadedAddresses);
         return await this.nedParser(parsedInstructions);
     }
     parseLogs(logs) {

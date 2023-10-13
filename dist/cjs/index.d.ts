@@ -1,7 +1,7 @@
 /// <reference types="node" />
 import { Idl } from "@coral-xyz/anchor";
 import { ParsedInstruction } from "@debridge-finance/solana-transaction-parser";
-import { Connection, Finality, Message, VersionedMessage } from "@solana/web3.js";
+import { Connection, Finality, LoadedAddresses, Message, VersionedMessage } from "@solana/web3.js";
 import { ReadableParsedTransaction } from "./humanize/types";
 export type SolanaParserToken = {
     name: string;
@@ -26,7 +26,7 @@ export default class SolanaParser {
     private inferTransactionType;
     private nedParser;
     parseTransaction(txId: string, commitment?: Finality): Promise<ReadableParsedTransaction | null>;
-    parseInstruction<T extends Message | VersionedMessage>(message: T): Promise<ReadableParsedTransaction>;
+    parseInstruction<T extends Message | VersionedMessage>(message: T, altLoadedAddresses?: T extends VersionedMessage ? LoadedAddresses | undefined : undefined): Promise<ReadableParsedTransaction>;
     parseLogs(logs: string[]): import("@debridge-finance/solana-transaction-parser").LogContext[];
     parseTransactionDump(txDump: string | Buffer): ParsedInstruction<Idl, string>[];
 }
