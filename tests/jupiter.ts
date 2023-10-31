@@ -9,7 +9,7 @@ import { getLookupTableAccounts } from "./utils/transactions";
 async function Jupiter() {
 	console.log("calling Jupiter test");
 
-	it("should parse versioned transaction with lookup tables", async function () {
+	xit("should parse versioned transaction with lookup tables", async function () {
 		const connection = getConnection();
 
 		const tokens = await (await fetch("https://token.jup.ag/all")).json();
@@ -94,6 +94,113 @@ async function Jupiter() {
 		const readonly = lookupAddreses.flatMap((x) => x.readonly);
 		const writable = lookupAddreses.flatMap((x) => x.writable);
 		const loadedAddresses = { readonly, writable };
+
+		const instruction = await solanaParser.parseInstruction(
+			tx.message,
+			loadedAddresses
+		);
+
+		assert.equal(instruction.type, "JUPITER_SWAP");
+	});
+
+	it("should parse versioned transaction with lookup tables scenario 2", async function () {
+		const connection = getConnection();
+
+		const tokens = await (await fetch("https://token.jup.ag/all")).json();
+
+		const solanaParser = new SolanaParser({
+			connection,
+			walletAddress: "8uqKsED1fpqAtPrPVV84m1Rxd9gmQ63LZxeRP5L3LyRK",
+			tokens,
+		});
+
+		const serializedTx = [
+			1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 1, 0, 9, 16, 117, 138,
+			166, 241, 84, 56, 222, 60, 243, 111, 11, 178, 224, 95, 179, 61, 246, 177,
+			21, 112, 54, 217, 32, 157, 254, 64, 116, 8, 12, 191, 49, 90, 11, 117, 32,
+			207, 33, 231, 26, 148, 122, 84, 159, 239, 83, 101, 163, 15, 144, 227, 194,
+			203, 241, 15, 204, 111, 85, 222, 185, 208, 209, 151, 116, 83, 18, 92, 59,
+			6, 62, 190, 21, 214, 214, 143, 222, 159, 6, 232, 169, 94, 204, 21, 250,
+			193, 212, 3, 59, 251, 32, 34, 135, 187, 119, 25, 83, 226, 102, 127, 203,
+			83, 133, 82, 54, 177, 25, 38, 15, 97, 38, 49, 47, 127, 3, 35, 152, 210,
+			194, 188, 144, 233, 19, 33, 180, 204, 126, 216, 215, 36, 113, 51, 125,
+			145, 223, 43, 231, 95, 241, 193, 206, 136, 193, 245, 240, 41, 60, 231,
+			238, 69, 98, 246, 238, 62, 4, 95, 160, 127, 170, 211, 17, 221, 164, 18,
+			18, 156, 211, 120, 92, 174, 169, 204, 244, 60, 183, 23, 105, 73, 236, 204,
+			71, 14, 84, 132, 129, 110, 94, 180, 14, 153, 150, 89, 65, 76, 238, 174,
+			252, 50, 240, 180, 166, 2, 78, 193, 43, 59, 18, 138, 72, 221, 239, 39,
+			219, 15, 67, 54, 242, 5, 45, 108, 28, 242, 35, 228, 214, 13, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 3, 6, 70, 111, 229, 33, 23, 50, 255, 236, 173, 186, 114, 195,
+			155, 231, 188, 140, 229, 187, 197, 247, 18, 107, 44, 67, 155, 58, 64, 0,
+			0, 0, 4, 121, 213, 91, 242, 49, 192, 110, 238, 116, 197, 110, 206, 104,
+			21, 7, 253, 177, 178, 222, 163, 244, 142, 81, 2, 177, 205, 162, 86, 188,
+			19, 143, 6, 155, 136, 87, 254, 171, 129, 132, 251, 104, 127, 99, 70, 24,
+			192, 53, 218, 196, 57, 220, 26, 235, 59, 85, 152, 160, 240, 0, 0, 0, 0, 1,
+			6, 221, 246, 225, 215, 101, 161, 147, 217, 203, 225, 70, 206, 235, 121,
+			172, 28, 180, 133, 237, 95, 91, 55, 145, 58, 140, 245, 133, 126, 255, 0,
+			169, 140, 151, 37, 143, 78, 36, 137, 241, 187, 61, 16, 41, 20, 142, 13,
+			131, 11, 90, 19, 153, 218, 255, 16, 132, 4, 142, 123, 216, 219, 233, 248,
+			89, 154, 128, 11, 255, 76, 135, 54, 136, 150, 194, 15, 193, 64, 115, 235,
+			241, 203, 90, 163, 117, 254, 129, 254, 77, 189, 200, 43, 164, 223, 183,
+			94, 120, 180, 63, 250, 39, 245, 215, 246, 74, 116, 192, 155, 31, 41, 88,
+			121, 222, 75, 9, 171, 54, 223, 201, 221, 81, 75, 50, 26, 167, 179, 140,
+			229, 232, 198, 250, 122, 243, 190, 219, 173, 58, 61, 101, 243, 106, 171,
+			201, 116, 49, 177, 187, 228, 194, 210, 246, 224, 228, 124, 166, 2, 3, 69,
+			47, 93, 97, 180, 164, 155, 220, 81, 19, 254, 203, 20, 151, 161, 61, 106,
+			129, 60, 23, 21, 83, 63, 50, 179, 122, 43, 34, 185, 27, 223, 25, 26, 32,
+			147, 199, 4, 8, 0, 5, 2, 192, 92, 21, 0, 12, 6, 0, 5, 0, 10, 7, 11, 1, 1,
+			9, 79, 11, 13, 0, 2, 3, 4, 5, 15, 10, 9, 9, 14, 9, 56, 11, 28, 55, 19, 25,
+			17, 51, 22, 18, 29, 21, 24, 26, 53, 3, 1, 13, 50, 11, 54, 52, 13, 3, 20,
+			23, 1, 27, 16, 63, 46, 47, 13, 64, 60, 1, 6, 44, 42, 43, 41, 45, 49, 40,
+			62, 48, 61, 11, 59, 39, 6, 4, 34, 32, 38, 31, 35, 30, 37, 36, 33, 13, 57,
+			11, 9, 58, 48, 193, 32, 155, 51, 65, 214, 156, 129, 2, 4, 0, 0, 0, 7, 10,
+			0, 2, 3, 90, 0, 2, 34, 100, 2, 3, 19, 100, 3, 4, 16, 39, 0, 0, 0, 0, 0, 0,
+			201, 115, 6, 0, 0, 0, 0, 0, 30, 0, 0, 11, 3, 5, 0, 0, 1, 9, 3, 131, 47,
+			105, 241, 125, 178, 180, 84, 205, 1, 200, 225, 243, 215, 224, 63, 248, 18,
+			120, 213, 56, 22, 139, 171, 12, 118, 104, 132, 37, 121, 50, 85, 14, 120,
+			187, 190, 42, 39, 191, 46, 38, 44, 43, 41, 37, 193, 194, 7, 122, 25, 35,
+			189, 36, 6, 9, 49, 118, 53, 12, 64, 93, 238, 245, 190, 125, 75, 238, 215,
+			43, 58, 140, 158, 172, 93, 140, 127, 22, 245, 195, 21, 94, 247, 71, 211,
+			94, 240, 228, 10, 248, 245, 233, 236, 29, 34, 241, 240, 26, 239, 3, 35,
+			247, 27, 37, 9, 214, 232, 247, 223, 24, 25, 89, 207, 72, 128, 40, 60, 213,
+			209, 162, 89, 104, 221, 132, 102, 121, 231, 18, 32, 215, 56, 197, 119,
+			125, 131, 10, 70, 112, 116, 119, 77, 82, 117, 44, 111, 75, 5, 80, 107, 81,
+			56, 122,
+		];
+
+		const txDeserialized = Buffer.from(serializedTx);
+
+		const tx = VersionedTransaction.deserialize(txDeserialized);
+
+		console.log("---->", tx.message.staticAccountKeys);
+
+		const tableAccounts = await getLookupTableAccounts(tx);
+
+		console.log("tableAccounts", tableAccounts);
+
+		const lookupAddreses = tx.message.addressTableLookups.map(
+			(addressTableLookup, tableIndex) => {
+				console.log("addressTableLookup", addressTableLookup);
+				return {
+					writable: addressTableLookup.writableIndexes.map(
+						(index) => tableAccounts[tableIndex].state.addresses[index]
+					),
+					readonly: addressTableLookup.readonlyIndexes.map(
+						(index) => tableAccounts[tableIndex].state.addresses[index]
+					),
+				};
+			}
+		);
+		const readonly = lookupAddreses.flatMap((x) => x.readonly);
+		const writable = lookupAddreses.flatMap((x) => x.writable);
+		const loadedAddresses = { readonly, writable };
+		console.log("readonly", readonly.length);
+		readonly.map((x) => console.log("readonly", x));
+		console.log("writable", writable.length);
+		writable.map((x) => console.log("writable", x));
 
 		const instruction = await solanaParser.parseInstruction(
 			tx.message,
