@@ -9,7 +9,7 @@ import meteoraVaultFn from "../humanize/meteoraVault/instructions";
 import MeteoraVaultIdl from "../humanize/meteoraVault/meteoraVault.json";
 import nedWalletVaultsFn from "../humanize/nedVaults/instructions";
 import NedWalletVaults from "../humanize/nedVaults/ned_wallet_vaults.json";
-import tensorswapFn from "../humanize/tensorswap/tensorswap";
+import tensorswapFn from "../humanize/tensorswap/instructions";
 import TensorSwapIdl from "../humanize/tensorswap/tensorswap.json";
 import orcaWhirpoolFn from "../humanize/whirlpool/orcaWhirpool";
 import OrcaWhirpoolIdl from "../humanize/whirlpool/whirlpool.json";
