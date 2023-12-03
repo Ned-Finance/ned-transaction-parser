@@ -8,46 +8,35 @@ import _ from "lodash";
 import { match } from "ts-pattern";
 import { HumanizeMatchResult, ReadableParsedInstruction } from "../types";
 import { humanizeUnknown } from "../unknown/instructions";
-import { MeteoraVaultInstruction } from "./types";
 
-const deposit = async (
-	parsed: ParsedInstruction<Idl, string>
+const transfer = async (
+	parsed: ParsedInstruction<Idl, string>,
+	connection: Connection
 ): Promise<Partial<ReadableParsedInstruction>> => {
-	const vaultAddress = _.find(
+	const args = parsed.args as any;
+	const from = _.find(
 		parsed.accounts,
-		(account: ParsedAccount) => account.name == "vault"
+		(account: ParsedAccount) => account.name == "sender"
 	)!.pubkey.toBase58();
+	const to = _.find(
+		parsed.accounts,
+		(account: ParsedAccount) => account.name == "receiver"
+	)!.pubkey.toBase58();
+	const amount = Number(args.lamports);
 
 	return {
 		data: {
-			amount: Number((parsed.args as any).tokenAmount),
-			vaultAddress,
-			action: "DEPOSIT",
+			from,
+			to,
+			amount,
 			rawInstruction: parsed,
-		} as MeteoraVaultInstruction,
-	};
-};
-
-const withdraw = async (
-	parsed: ParsedInstruction<Idl, string>
-): Promise<Partial<ReadableParsedInstruction>> => {
-	const vaultAddress = _.find(
-		parsed.accounts,
-		(account: ParsedAccount) => account.name == "vault"
-	)!.pubkey.toBase58();
-
-	return {
-		data: {
-			amount: Number((parsed.args as any).unmintAmount),
-			vaultAddress,
-			action: "WITHDRAW",
-			rawInstruction: parsed,
-		} as MeteoraVaultInstruction,
+		},
 	};
 };
 
 const defaultHandler = async (
-	parsed: ParsedInstruction<Idl, string>
+	parsed: ParsedInstruction<Idl, string>,
+	connection: Connection
 ): Promise<Partial<ReadableParsedInstruction>> => {
 	return await humanizeUnknown(parsed);
 };
@@ -60,25 +49,27 @@ export default async (
 		parsed.name
 	)
 		.with(
-			"deposit",
+			"transfer",
 			async () =>
 				new Promise<HumanizeMatchResult>(async (resolve) =>
-					resolve(["METEORA_VAULT", await deposit(parsed)])
+					resolve(["SOL_TRANSFER", await transfer(parsed, connection)])
 				)
 		)
 		.with(
-			"withdraw",
+			"transferChecked",
 			async () =>
 				new Promise<HumanizeMatchResult>(async (resolve) =>
-					resolve(["METEORA_VAULT", await withdraw(parsed)])
+					resolve(["SPL_TRANSFER", await transfer(parsed, connection)])
 				)
 		)
 		.otherwise(
 			async () =>
 				new Promise<HumanizeMatchResult>(async (resolve) =>
-					resolve(["UNKNOWN", await defaultHandler(parsed)])
+					resolve(["UNKNOWN", await defaultHandler(parsed, connection)])
 				)
 		);
+
+	// console.log('Token program: ', partialTransaction)
 
 	return {
 		data: partialTransaction.data!,

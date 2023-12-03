@@ -9,57 +9,51 @@ import { match } from "ts-pattern";
 import { HumanizeMatchResult, ReadableParsedInstruction } from "../types";
 import { humanizeUnknown } from "../unknown/instructions";
 
-const deposit = async (
+const parseOrca = async (
 	parsed: ParsedInstruction<Idl, string>,
-	fromBalance: boolean
+	connection: Connection
 ): Promise<Partial<ReadableParsedInstruction>> => {
 	const args = parsed.args as any;
-	// console.log("parsed ==>", parsed);
-	const vaultAddress = _.find(
+	const from = _.find(
 		parsed.accounts,
-		(account: ParsedAccount) => account.name == "vaultAccount"
+		(account: ParsedAccount) => account.name == "tokenOwnerAccountA"
 	)!.pubkey.toBase58();
-
-	const mint = _.find(
+	const to = _.find(
 		parsed.accounts,
-		(account: ParsedAccount) => account.name == "mint"
+		(account: ParsedAccount) => account.name == "tokenOwnerAccountB"
 	)!.pubkey.toBase58();
-
 	return {
 		data: {
-			vaultAddress,
-			mint,
-			fromBalance,
-			identifier: Buffer.from(args["identifier"]).toString(),
-			amount: args["identifier"] ? Number(args["amount"]) : undefined,
-			action: "DEPOSIT",
+			from,
+			to,
+			amountIn: Number(args.inAmount),
+			amountOut: Number(args.minimumOutAmount),
+			protocol: "JUPITER",
 			rawInstruction: parsed,
 		},
 	};
 };
 
-const withdraw = async (
-	parsed: ParsedInstruction<Idl, string>
+const parseSwapRaydium = async (
+	parsed: ParsedInstruction<Idl, string>,
+	connection: Connection
 ): Promise<Partial<ReadableParsedInstruction>> => {
 	const args = parsed.args as any;
-	// console.log("parsed ==>", parsed);
-	const vaultAddress = _.find(
+	const from = _.find(
 		parsed.accounts,
-		(account: ParsedAccount) => account.name == "vaultAccount"
+		(account: ParsedAccount) => account.name == "userSourceTokenAccount"
 	)!.pubkey.toBase58();
-
-	const mint = _.find(
+	const to = _.find(
 		parsed.accounts,
-		(account: ParsedAccount) => account.name == "mint"
+		(account: ParsedAccount) => account.name == "userDestinationTokenAccount"
 	)!.pubkey.toBase58();
-
 	return {
 		data: {
-			vaultAddress,
-			mint,
-			identifier: Buffer.from(args["identifier"]).toString(),
-			action: "WITHDRAW",
-			amount: args["identifier"] ? Number(args["amount"]) : undefined,
+			from,
+			to,
+			amountIn: args.inAmount,
+			amountOut: args.minimumOutAmount,
+			protocol: "JUPITER",
 			rawInstruction: parsed,
 		},
 	};
@@ -79,38 +73,20 @@ export default async (
 		parsed.name
 	)
 		.with(
-			"depositToVaultWithDiffBalance",
+			"whirlpoolSwap",
 			async () =>
 				new Promise<HumanizeMatchResult>(async (resolve) =>
-					resolve(["NED_VAULTS", await deposit(parsed, true)])
+					resolve(["JUPITER_SWAP_V2", await parseOrca(parsed, connection)])
 				)
 		)
 		.with(
-			"depositLiquidityWithDiffBalance",
+			"raydiumSwapV2",
 			async () =>
 				new Promise<HumanizeMatchResult>(async (resolve) =>
-					resolve(["NED_VAULTS", await deposit(parsed, true)])
-				)
-		)
-		.with(
-			"depositLiquidity",
-			async () =>
-				new Promise<HumanizeMatchResult>(async (resolve) =>
-					resolve(["NED_VAULTS", await deposit(parsed, false)])
-				)
-		)
-		.with(
-			"withdrawLiquidity",
-			async () =>
-				new Promise<HumanizeMatchResult>(async (resolve) =>
-					resolve(["NED_VAULTS", await withdraw(parsed)])
-				)
-		)
-		.with(
-			"withdrawFromVault",
-			async () =>
-				new Promise<HumanizeMatchResult>(async (resolve) =>
-					resolve(["NED_VAULTS", await withdraw(parsed)])
+					resolve([
+						"JUPITER_SWAP_V2",
+						await parseSwapRaydium(parsed, connection),
+					])
 				)
 		)
 		.otherwise(
@@ -120,11 +96,11 @@ export default async (
 				)
 		);
 
-	// console.log('Jupiter Program V4:', partialTransaction)
+	// console.log('Jupiter Program V2:', partialTransaction)
 
 	return {
 		data: partialTransaction.data!,
-		type: type,
+		type,
 		relevance: "PRIMARY",
 	};
 };

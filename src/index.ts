@@ -13,8 +13,13 @@ import {
 	VersionedMessage,
 } from "@solana/web3.js";
 import _ from "lodash";
-import { humanizeUnknown } from "./humanize/fn/unknown";
+import jupiterTransaction from "./humanize/jupiter/jupiterTransaction";
+import jupiterTransactionV2 from "./humanize/jupiter/jupiterTransactionV2";
+import jupiterTransactionV4 from "./humanize/jupiter/jupiterTransactionV4";
 import nedWalletVaults from "./humanize/nedVaults/inference";
+import solTransfer from "./humanize/systemProgram/solTransfer";
+import splTransfer from "./humanize/tokenProgram/splTransfer";
+import splTransferMultiple from "./humanize/tokenProgram/splTransferMultiple";
 import {
 	InferenceFnProps,
 	InferenceResult,
@@ -22,13 +27,8 @@ import {
 	ReadableParsedInstruction,
 	ReadableParsedTransaction,
 } from "./humanize/types";
-import jupiterTransaction from "./inference/jupiterTransaction";
-import jupiterTransactionV2 from "./inference/jupiterTransactionV2";
-import jupiterTransactionV4 from "./inference/jupiterTransactionV4";
-import solTransfer from "./inference/solTransfer";
-import splTransfer from "./inference/splTransfer";
-import splTransferMultiple from "./inference/splTransferMultiple";
-import unknown from "./inference/unknown";
+import unknown from "./humanize/unknown/inference";
+import { humanizeUnknown } from "./humanize/unknown/instructions";
 import protocolsPrograms from "./protocols/programs";
 import solanaPrograms from "./protocols/solana";
 import { Program } from "./protocols/types";

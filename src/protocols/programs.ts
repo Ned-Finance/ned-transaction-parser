@@ -1,18 +1,18 @@
 import { Idl } from "@coral-xyz/anchor";
-import jupiterSwap from "../humanize/fn/jupiterSwap";
-import jupiterSwapV2 from "../humanize/fn/jupiterSwapV2";
-import jupiterSwapV4 from "../humanize/fn/jupiterSwapV4";
-import orcaWhirpoolFn from "../humanize/fn/orcaWhirpool";
-import tensorswapFn from "../humanize/fn/tensorswap";
+import JupiterSwapIdl from "../humanize/jupiter/jupiter.json";
+import jupiterSwap from "../humanize/jupiter/jupiterSwap";
+import jupiterSwapV2 from "../humanize/jupiter/jupiterSwapV2";
+import jupiterSwapV4 from "../humanize/jupiter/jupiterSwapV4";
+import JupiterSwapIdlV2 from "../humanize/jupiter/jupiterV2.json";
+import JupiterSwapIdlV4 from "../humanize/jupiter/jupiterV4.json";
 import meteoraVaultFn from "../humanize/meteoraVault/instructions";
 import MeteoraVaultIdl from "../humanize/meteoraVault/meteoraVault.json";
 import nedWalletVaultsFn from "../humanize/nedVaults/instructions";
 import NedWalletVaults from "../humanize/nedVaults/ned_wallet_vaults.json";
-import JupiterSwapIdl from "../idl/jupiter.json";
-import JupiterSwapIdlV2 from "../idl/jupiterV2.json";
-import JupiterSwapIdlV4 from "../idl/jupiterV4.json";
-import TensorSwapIdl from "../idl/tensorswap.json";
-import OrcaWhirpoolIdl from "../idl/whirlpool.json";
+import tensorswapFn from "../humanize/tensorswap/tensorswap";
+import TensorSwapIdl from "../humanize/tensorswap/tensorswap.json";
+import orcaWhirpoolFn from "../humanize/whirlpool/orcaWhirpool";
+import OrcaWhirpoolIdl from "../humanize/whirlpool/whirlpool.json";
 import { ProtocolProgram } from "./types";
 
 const protocolsPrograms: ProtocolProgram[] = [

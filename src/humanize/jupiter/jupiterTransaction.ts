@@ -1,4 +1,4 @@
-import { InferenceFnProps, InferenceResult, Swap } from "../humanize/types";
+import { InferenceFnProps, InferenceResult, Swap } from "../types";
 
 const jupiterTransaction = async (
 	props: InferenceFnProps

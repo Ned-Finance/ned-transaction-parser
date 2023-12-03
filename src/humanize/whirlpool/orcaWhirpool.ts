@@ -8,41 +8,29 @@ import _ from "lodash";
 import { match } from "ts-pattern";
 import { HumanizeMatchResult, ReadableParsedInstruction } from "../types";
 import { humanizeUnknown } from "../unknown/instructions";
-import { MeteoraVaultInstruction } from "./types";
 
-const deposit = async (
-	parsed: ParsedInstruction<Idl, string>
+const parseOrca = async (
+	parsed: ParsedInstruction<Idl, string>,
+	connection: Connection
 ): Promise<Partial<ReadableParsedInstruction>> => {
-	const vaultAddress = _.find(
+	const args = parsed.args as any;
+	const from = _.find(
 		parsed.accounts,
-		(account: ParsedAccount) => account.name == "vault"
+		(account: ParsedAccount) => account.name == "tokenOwnerAccountA"
 	)!.pubkey.toBase58();
-
+	const to = _.find(
+		parsed.accounts,
+		(account: ParsedAccount) => account.name == "tokenOwnerAccountB"
+	)!.pubkey.toBase58();
 	return {
 		data: {
-			amount: Number((parsed.args as any).tokenAmount),
-			vaultAddress,
-			action: "DEPOSIT",
+			from,
+			to,
+			amountIn: args.amountSpecifiedIsInput ? Number(args.amount) : 0,
+			amountOut: 0,
+			protocol: "ORCA",
 			rawInstruction: parsed,
-		} as MeteoraVaultInstruction,
-	};
-};
-
-const withdraw = async (
-	parsed: ParsedInstruction<Idl, string>
-): Promise<Partial<ReadableParsedInstruction>> => {
-	const vaultAddress = _.find(
-		parsed.accounts,
-		(account: ParsedAccount) => account.name == "vault"
-	)!.pubkey.toBase58();
-
-	return {
-		data: {
-			amount: Number((parsed.args as any).unmintAmount),
-			vaultAddress,
-			action: "WITHDRAW",
-			rawInstruction: parsed,
-		} as MeteoraVaultInstruction,
+		},
 	};
 };
 
@@ -60,17 +48,10 @@ export default async (
 		parsed.name
 	)
 		.with(
-			"deposit",
+			"swap",
 			async () =>
 				new Promise<HumanizeMatchResult>(async (resolve) =>
-					resolve(["METEORA_VAULT", await deposit(parsed)])
-				)
-		)
-		.with(
-			"withdraw",
-			async () =>
-				new Promise<HumanizeMatchResult>(async (resolve) =>
-					resolve(["METEORA_VAULT", await withdraw(parsed)])
+					resolve(["SWAP_ORCA", await parseOrca(parsed, connection)])
 				)
 		)
 		.otherwise(
@@ -79,6 +60,8 @@ export default async (
 					resolve(["UNKNOWN", await defaultHandler(parsed)])
 				)
 		);
+
+	// console.log('Jupiter Program V4:', partialTransaction)
 
 	return {
 		data: partialTransaction.data!,

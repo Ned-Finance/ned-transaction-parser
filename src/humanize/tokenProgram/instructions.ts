@@ -9,64 +9,74 @@ import { match } from "ts-pattern";
 import { HumanizeMatchResult, ReadableParsedInstruction } from "../types";
 import { humanizeUnknown } from "../unknown/instructions";
 
-const deposit = async (
+const transfer = async (
 	parsed: ParsedInstruction<Idl, string>,
-	fromBalance: boolean
+	connection: Connection
 ): Promise<Partial<ReadableParsedInstruction>> => {
 	const args = parsed.args as any;
-	// console.log("parsed ==>", parsed);
-	const vaultAddress = _.find(
+	const from = _.find(
 		parsed.accounts,
-		(account: ParsedAccount) => account.name == "vaultAccount"
+		(account: ParsedAccount) => account.name == "source"
 	)!.pubkey.toBase58();
-
-	const mint = _.find(
+	const to = _.find(
 		parsed.accounts,
-		(account: ParsedAccount) => account.name == "mint"
+		(account: ParsedAccount) => account.name == "destination"
 	)!.pubkey.toBase58();
+	const tokenMint = _.find(
+		parsed.accounts,
+		(account: ParsedAccount) => account.name == "tokenMint"
+	)?.pubkey.toBase58();
+	const owner = _.find(
+		parsed.accounts,
+		(account: ParsedAccount) => account.name == "owner"
+	)?.pubkey.toBase58();
+	const amount = Number(args.amount);
 
 	return {
 		data: {
-			vaultAddress,
-			mint,
-			fromBalance,
-			identifier: Buffer.from(args["identifier"]).toString(),
-			amount: args["identifier"] ? Number(args["amount"]) : undefined,
-			action: "DEPOSIT",
+			from,
+			to,
+			amount,
+			owner,
+			tokenMint,
 			rawInstruction: parsed,
 		},
 	};
 };
 
-const withdraw = async (
-	parsed: ParsedInstruction<Idl, string>
+const minTo = async (
+	parsed: ParsedInstruction<Idl, string>,
+	connection: Connection
 ): Promise<Partial<ReadableParsedInstruction>> => {
 	const args = parsed.args as any;
-	// console.log("parsed ==>", parsed);
-	const vaultAddress = _.find(
+	const authority = _.find(
 		parsed.accounts,
-		(account: ParsedAccount) => account.name == "vaultAccount"
+		(account: ParsedAccount) => account.name == "authority"
 	)!.pubkey.toBase58();
-
-	const mint = _.find(
+	const to = _.find(
 		parsed.accounts,
-		(account: ParsedAccount) => account.name == "mint"
+		(account: ParsedAccount) => account.name == "mintTo"
 	)!.pubkey.toBase58();
+	const tokenMint = _.find(
+		parsed.accounts,
+		(account: ParsedAccount) => account.name == "tokenMint"
+	)?.pubkey.toBase58();
+	const amount = Number(args.amount);
 
 	return {
 		data: {
-			vaultAddress,
-			mint,
-			identifier: Buffer.from(args["identifier"]).toString(),
-			action: "WITHDRAW",
-			amount: args["identifier"] ? Number(args["amount"]) : undefined,
+			authority,
+			to,
+			amount,
+			tokenMint,
 			rawInstruction: parsed,
 		},
 	};
 };
 
 const defaultHandler = async (
-	parsed: ParsedInstruction<Idl, string>
+	parsed: ParsedInstruction<Idl, string>,
+	connection: Connection
 ): Promise<Partial<ReadableParsedInstruction>> => {
 	return await humanizeUnknown(parsed);
 };
@@ -79,52 +89,38 @@ export default async (
 		parsed.name
 	)
 		.with(
-			"depositToVaultWithDiffBalance",
+			"transfer",
 			async () =>
 				new Promise<HumanizeMatchResult>(async (resolve) =>
-					resolve(["NED_VAULTS", await deposit(parsed, true)])
+					resolve(["SPL_TRANSFER", await transfer(parsed, connection)])
 				)
 		)
 		.with(
-			"depositLiquidityWithDiffBalance",
+			"transferChecked",
 			async () =>
 				new Promise<HumanizeMatchResult>(async (resolve) =>
-					resolve(["NED_VAULTS", await deposit(parsed, true)])
+					resolve(["SPL_TRANSFER", await transfer(parsed, connection)])
 				)
 		)
 		.with(
-			"depositLiquidity",
+			"mintTo",
 			async () =>
 				new Promise<HumanizeMatchResult>(async (resolve) =>
-					resolve(["NED_VAULTS", await deposit(parsed, false)])
-				)
-		)
-		.with(
-			"withdrawLiquidity",
-			async () =>
-				new Promise<HumanizeMatchResult>(async (resolve) =>
-					resolve(["NED_VAULTS", await withdraw(parsed)])
-				)
-		)
-		.with(
-			"withdrawFromVault",
-			async () =>
-				new Promise<HumanizeMatchResult>(async (resolve) =>
-					resolve(["NED_VAULTS", await withdraw(parsed)])
+					resolve(["TOKEN_MINT", await minTo(parsed, connection)])
 				)
 		)
 		.otherwise(
 			async () =>
 				new Promise<HumanizeMatchResult>(async (resolve) =>
-					resolve(["UNKNOWN", await defaultHandler(parsed)])
+					resolve(["UNKNOWN", await defaultHandler(parsed, connection)])
 				)
 		);
 
-	// console.log('Jupiter Program V4:', partialTransaction)
+	// console.log('Token program: ', partialTransaction)
 
 	return {
 		data: partialTransaction.data!,
-		type: type,
+		type,
 		relevance: "PRIMARY",
 	};
 };
