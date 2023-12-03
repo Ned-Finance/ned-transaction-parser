@@ -14,7 +14,7 @@
 	},
 	"dependencies": {
 		"@coral-xyz/anchor": "^0.26.0",
-		"@debridge-finance/solana-transaction-parser": "^2.0.0",
+		"@debridge-finance/solana-transaction-parser": "^2.0.1",
 		"@metaplex-foundation/js": "^0.19.4",
 		"@metaplex-foundation/mpl-token-metadata": "^2.13.0",
 		"@rollup/plugin-json": "^6.0.0",

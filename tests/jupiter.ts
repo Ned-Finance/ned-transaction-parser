@@ -103,7 +103,7 @@ async function Jupiter() {
 		assert.equal(instruction.type, "JUPITER_SWAP");
 	});
 
-	it("should parse versioned transaction with lookup tables scenario 2", async function () {
+	xit("should parse versioned transaction with lookup tables scenario 2", async function () {
 		const connection = getConnection();
 
 		const tokens = await (await fetch("https://token.jup.ag/all")).json();

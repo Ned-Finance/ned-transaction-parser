@@ -14,6 +14,7 @@ import {
 } from "@solana/web3.js";
 import _ from "lodash";
 import { humanizeUnknown } from "./humanize/fn/unknown";
+import nedWalletVaults from "./humanize/nedVaults/inference";
 import {
 	InferenceFnProps,
 	InferenceResult,
@@ -106,6 +107,7 @@ export default class SolanaParser {
 		// console.debug(instructions)
 
 		const fns = [
+			nedWalletVaults,
 			jupiterTransaction,
 			jupiterTransactionV2,
 			jupiterTransactionV4,
